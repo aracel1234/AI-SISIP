@@ -1,0 +1,2731 @@
+{
+  "name": "Workflow Data Ingestion Pipeline Chatbot SISIP",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# *Data Ingestion Pipeline*\n## *Pipeline* untuk memproses data & *file* pada GDrive menjadi *vector & embedding (knowledge)*",
+        "height": 208,
+        "width": 448,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2704,
+        608
+      ],
+      "typeVersion": 1,
+      "id": "9ed97a15-6d96-4a25-9c50-28adb3cddbf6",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "record_manager",
+        "limit": 1,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "source_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Input File Bertahap').item.json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        784
+      ],
+      "id": "6e9b3458-02be-4250-81ae-84c358e43fe7",
+      "name": "Search in Record Manager",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "type": "SHA256",
+        "value": "={{ $json.text }}",
+        "dataPropertyName": "hash"
+      },
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        992,
+        784
+      ],
+      "id": "dd4778fa-5422-454d-886a-cec88785d48e",
+      "name": "Generate Hash"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b4397545-0061-4658-ada7-5c84ce3cdee5",
+                    "leftValue": "={{ $json.jenis }}",
+                    "rightValue": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Word"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "38497ea4-a794-4230-ab49-770fa81c39a6",
+                    "leftValue": "={{ $json.jenis }}",
+                    "rightValue": "application/vnd.google-apps.document",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Google Docs"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.jenis }}",
+                    "rightValue": "application/pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "9e7e8cac-2188-4ed0-858f-fc8c1c863705"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PDF"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1dbcb04d-e62f-48ea-b771-9dbb7bf5cc4d",
+                    "leftValue": "={{ $json.jenis }}",
+                    "rightValue": "text/csv",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "CSV"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "dacb3954-05d1-40bc-b6c9-089f1fdb873d",
+                    "leftValue": "={{ $json.jenis }}",
+                    "rightValue": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Excel"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "6f99e773-6c79-449b-8514-5c3de8eafce8",
+                    "leftValue": "={{ $json.jenis }}",
+                    "rightValue": "application/vnd.google-apps.spreadsheet",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Google Sheet"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "cc287419-d26b-4de0-bbe4-2a1cc9381bb4",
+                    "leftValue": "={{ $json.jenis }}",
+                    "rightValue": "application/vnd.oasis.opendocument.spreadsheet",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Open Documents"
+            }
+          ]
+        },
+        "options": {
+          "allMatchingOutputs": false
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -368,
+        608
+      ],
+      "id": "45fed6bd-e394-4fdc-b78a-2819e25033aa",
+      "name": "Check File Format",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        704
+      ],
+      "id": "2151afd8-1c1a-4f11-b94a-92f813c5e214",
+      "name": "Extract from CSV"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -144,
+        816
+      ],
+      "id": "fc5a4412-8404-4f7f-8847-80e1ccaac85f",
+      "name": "Extract from Excel"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "include": "allFieldsExcept",
+        "fieldsToExclude": "row_number",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        160,
+        800
+      ],
+      "id": "1b8b0eab-1c02-42c6-9b7d-9a5e6d3d8476",
+      "name": "Aggregate Data"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3b837727-e57c-49f0-9a8f-839fd7541df8",
+              "name": "text",
+              "value": "={{ $json.concatenated_data }}",
+              "type": "string"
+            },
+            {
+              "id": "2bd0a0d4-2a44-4bd3-ac14-489c2d3f3d50",
+              "name": "column_names",
+              "value": "={{ $json.column_names }}",
+              "type": "string"
+            },
+            {
+              "id": "9afd0ae0-ecaf-4c8a-a42f-e485409cab17",
+              "name": "data_type",
+              "value": "tabular",
+              "type": "string"
+            },
+            {
+              "id": "945e0d2e-cb15-44c7-a328-076c0b7426cb",
+              "name": "data_rows",
+              "value": "={{ $('Aggregate Data').item.json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        544,
+        912
+      ],
+      "id": "24c77d90-fa13-465a-880b-928664a3e4db",
+      "name": "Set Text for Tabular Data"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -144,
+        608
+      ],
+      "id": "ae19aa64-d5ad-4224-84a8-d69ace2b92b9",
+      "name": "Extract from PDF"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        0,
+        496
+      ],
+      "id": "ae270848-90ab-4bed-a16e-aac8e94ed45d",
+      "name": "Extract (Get) from Google Docs",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "105da010-eb73-40db-858b-b4afcda4c7a4",
+              "name": "text",
+              "value": "={{ $json.content || $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "6e99df88-72f5-4b7e-bd3b-d79a4fc2824b",
+              "name": "data_type",
+              "value": "text",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        544,
+        544
+      ],
+      "id": "65adc0e9-7c8b-4392-a662-0adf6911ca96",
+      "name": "Set Up Text to be Hashed"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "concatenate",
+              "field": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        336,
+        912
+      ],
+      "id": "fe4608a2-e7d9-4005-bf18-8715f7b93f3c",
+      "name": "Concatenate All Rows into One String"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4d998bad-b037-4303-93ff-2276d962f03b",
+              "name": "column_names",
+              "value": "={{ $json.data.first().keys() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        336,
+        704
+      ],
+      "id": "404c55d7-be40-49e0-8899-20b8163bd706",
+      "name": "Extract Column Names (Table Schema)"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "sheetsToFormat": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -608,
+        688
+      ],
+      "id": "7413b98f-3911-436b-b218-6e1cbec19ee7",
+      "name": "Download File (Binary)",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        544,
+        704
+      ],
+      "id": "a4d9b773-fe51-45f9-a972-2cdbb980e18a",
+      "name": "Merge Table Content & Schema"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "empty",
+                      "singleValue": true
+                    },
+                    "id": "b0c524c3-b672-40cb-b596-44adb3fa8c87"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "File is new"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "fed4f5d5-54f8-40ed-81e6-7e6d1cf6c749",
+                    "leftValue": "={{ $json.content_hash }}",
+                    "rightValue": "={{ $('Generate Hash').item.json.hash }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "File is modified"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e7a032b1-be0a-4b65-8133-84ac2db198d2",
+                    "leftValue": "={{ $json.content_hash }}",
+                    "rightValue": "={{ $('Generate Hash').item.json.hash }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "File is not modified"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        1344,
+        768
+      ],
+      "id": "7c080b1e-c3a0-4d81-8c81-3beed8a9faf7",
+      "name": "Check if the File is New, Modified or Not"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "60f40883-c3f8-4715-9c2b-accc1ea646ab",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "471b2cc2-897c-40dd-96c9-f5f43b43c8fd",
+              "name": "data_type",
+              "value": "={{ $json.data_type }}",
+              "type": "string"
+            },
+            {
+              "id": "f963053c-8b9e-454e-a44a-8bd4b6aedaea",
+              "name": "column_names",
+              "value": "={{ $json.column_names || null }}",
+              "type": "string"
+            },
+            {
+              "id": "c0d138c5-81d9-4e87-8460-7a2fa452d9cf",
+              "name": "data_rows",
+              "value": "={{ $json.data_rows || null }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        752,
+        784
+      ],
+      "id": "94982972-41b6-4c8a-95e5-717660a41d13",
+      "name": "Set Text (Flow Merged)",
+      "notesInFlow": true,
+      "notes": "The \"merged\" term means the workflow is merged, NOT the text & tabular data."
+    },
+    {
+      "parameters": {
+        "content": "# 1 : Pengecekan Berkala dari Google Drive",
+        "height": 864,
+        "width": 912
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2224,
+        272
+      ],
+      "typeVersion": 1,
+      "id": "b352bb92-ca60-4fd0-babe-1fc427cdb43e",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "# 3 : Ekstraksi Konten dari *File*\n## *File* teks (PDF, Docs) diambil konten teksnya\n## *File* *spreadsheet* (CSV, Excel, Sheets) diambil nama kolom & seluruh barisnya\n",
+        "height": 944,
+        "width": 2000,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -416,
+        224
+      ],
+      "typeVersion": 1,
+      "id": "9722d17b-36eb-4aec-bf7d-48b0971cbe93",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "# 3 : Pengecekan *File* dalam *Database*\n## Apakah sudah ada?",
+        "height": 320,
+        "width": 640,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        928,
+        656
+      ],
+      "typeVersion": 1,
+      "id": "a9498cc3-4b1a-4484-8b5c-e94f0157ecb5",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Cek apakah item ini punya binary data dengan nama key 'data'\nif ($input.item.binary && $input.item.binary.data) {\n  \n  // Ubah metadata jadi ZIP langsung di objek .data\n  $input.item.binary.data.fileName = 'document.zip';\n  $input.item.binary.data.fileExtension = 'zip';\n  $input.item.binary.data.mimeType = 'application/zip';\n  \n}\n\nreturn $input.item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -144,
+        400
+      ],
+      "id": "f969c98d-6d31-45fb-b44e-cb2c4c2a87eb",
+      "name": "Convert to ZIP"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Ambil item pertama\nconst item = $input.first();\nlet fullText = \"\";\nlet debugInfo = \"File document.xml tidak ditemukan.\";\n\n// 2. Pastikan ada binary data\nif (item.binary) {\n    const binaries = item.binary;\n    \n    // 3. Loop semua kunci binary untuk mencari 'document.xml'\n    for (const key of Object.keys(binaries)) {\n        const fileObj = binaries[key];\n        \n        // Cek apakah ini file document.xml\n        if (fileObj.fileName === 'document.xml') {\n            debugInfo = \"Ditemukan dan diproses dari key: \" + key;\n            \n            // 4. Decode Base64 ke String\n            const b64Data = fileObj.data;\n            const xmlString = Buffer.from(b64Data, 'base64').toString('utf8');\n\n            // --- BAGIAN LOGIKA BARU YANG LEBIH KUAT ---\n            \n            // Regex ini mencari tag <w:t ... > ISI TEKS </w:t>\n            // [\\s\\S]*? artinya: Ambil semua karakter TERMASUK enter (newline)\n            const regex = /<w:t[\\s\\S]*?>(.*?)<\\/w:t>/g;\n            \n            let match;\n            let textChunks = [];\n\n            while ((match = regex.exec(xmlString)) !== null) {\n                // match[1] adalah isi teksnya\n                // Kita tambahkan pembersih ekstra: .replace(/<[^>]+>/g, '') \n                // untuk membuang jika ada sisa tag xml yang nyangkut di dalam teks\n                let cleanChunk = match[1].replace(/<[^>]+>/g, '');\n                \n                // Tambahkan spasi agar teks tidak menempel\n                if (cleanChunk.trim().length > 0) {\n                     textChunks.push(cleanChunk);\n                }\n            }\n\n            // Gabungkan semua potongan dengan spasi atau enter\n            fullText = textChunks.join(' \\n ');\n            \n            break; \n        }\n    }\n}\n\nreturn [\n  {\n    json: {\n      content: fullText, // Ini harusnya sekarang teks bersih\n      debug_status: debugInfo\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        336,
+        400
+      ],
+      "id": "2c86d0dc-afe8-4aef-8ac4-fff12fc2ccda",
+      "name": "Extract DOCX Content"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.compression",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        400
+      ],
+      "id": "9b1abde6-99ac-4462-8927-c00ea1fd912b",
+      "name": "Decompress"
+    },
+    {
+      "parameters": {
+        "operation": "ods",
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -144,
+        1024
+      ],
+      "id": "9c9b2ffa-0da5-4179-98f3-0623192ecf90",
+      "name": "Extract from ODS"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{$env.GOOGLE_DRIVE_FOLDER_ID}}",
+            "mode": "id"
+          }
+        },
+        "options": {
+          "fields": [
+            "id",
+            "name",
+            "mimeType"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2000,
+        528
+      ],
+      "id": "237b4283-7070-4d16-ba13-8dcf6207fbea",
+      "name": "Pencarian folder 'AI SISIP'"
+    },
+    {
+      "parameters": {
+        "tableId": "ref_data",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "nama",
+              "fieldValue": "={{ $json.name }}"
+            },
+            {
+              "fieldId": "path",
+              "fieldValue": "={{ $json.current_path }}"
+            },
+            {
+              "fieldId": "jenis",
+              "fieldValue": "={{ $json.mimeType }}"
+            },
+            {
+              "fieldId": "id",
+              "fieldValue": "={{ $json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1584,
+        528
+      ],
+      "id": "93e121ee-a620-47b7-aa06-c8b193a0bf98",
+      "name": "Input folder dan File Sementara"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "871ae073-028a-4aed-b7e8-d1be7c260f01",
+              "name": "id",
+              "value": "={{ $json.idd }}",
+              "type": "string"
+            },
+            {
+              "id": "ae610e22-5f72-4485-b738-801f9c1f7b8e",
+              "name": "current_path",
+              "value": "={{ \"AI SISIP/\" +$json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "c96850ec-1636-4f11-ae39-6ef264c24f44",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "b2741586-3a0c-4be8-9d03-ce16a6e67dd9",
+              "name": "mimeType",
+              "value": "={{ $json.mimeType }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1792,
+        528
+      ],
+      "id": "2054601e-09f2-44a3-9344-fa3dd5fd0b7f",
+      "name": "Set Path Folder 'AI SISIP'",
+      "notes": "🛠 AI AUTO-FIX: Changed assignments.assignments[0].value to ={{ $json.id }} and removed 'idd'"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ab65eafd-ea7b-40ee-8989-0dd801dda838",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1488,
+        704
+      ],
+      "id": "8507a1cb-5291-463b-86dc-3b3bffb0cb45",
+      "name": "Pegecekan DB File & Folder Sementara"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "ref_data",
+        "limit": 1
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1648,
+        704
+      ],
+      "id": "f8a46a15-dd7f-4a3a-9645-6436b3292295",
+      "name": "Get 1 File & Folder Sementara",
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a252b9f6-2ef4-4004-a73b-05cfc1521d97",
+                    "leftValue": "={{ $json.nama }}",
+                    "rightValue": "Trash",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Trash Folder"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "02a71cf1-a589-4836-999f-403725a9dad4",
+                    "leftValue": "={{ $json.jenis }}",
+                    "rightValue": "application/vnd.google-apps.shortcut",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Shortcut"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.jenis }}",
+                    "rightValue": "application/vnd.google-apps.folder",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "070fd3b3-c883-40a0-8c54-fc4997073408"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Folder"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "aa262c95-3b10-4150-b86e-c8eebb5f4b33",
+                    "leftValue": "={{ $json.jenis }}",
+                    "rightValue": "application/vnd.google-apps.folder",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1824,
+        880
+      ],
+      "id": "d6181dca-5bed-4d50-9bd9-b8561419da21",
+      "name": "Pengecekan Jenis File & Folder Sementara",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "tableId": "ref_file",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "nama",
+              "fieldValue": "={{ $('Pengecekan Jenis File & Folder Sementara').item.json.nama }}"
+            },
+            {
+              "fieldId": "path",
+              "fieldValue": "={{ $('Pengecekan Jenis File & Folder Sementara').item.json.path }}"
+            },
+            {
+              "fieldId": "id",
+              "fieldValue": "={{ $('Pengecekan Jenis File & Folder Sementara').item.json.id }}"
+            },
+            {
+              "fieldId": "jenis",
+              "fieldValue": "={{ $('Pengecekan Jenis File & Folder Sementara').item.json.jenis }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -2000,
+        704
+      ],
+      "id": "12aa7d3e-24f5-4686-9834-3bb40010438e",
+      "name": "Input DB File"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1008,
+        688
+      ],
+      "id": "e2996f1d-2d07-4b6b-b4a4-cb0613ac2542",
+      "name": "Input File Bertahap"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sheet1"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        0,
+        912
+      ],
+      "id": "22ef5b13-537a-41eb-9126-89f10d1aa03a",
+      "name": "Get row(s) in sheet",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e32c4426-81ab-4a8a-b92d-867160444d7e",
+              "leftValue": "={{ $('Pengambilan DB File Pengecekan').item.json.id }}",
+              "rightValue": "=",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1488,
+        912
+      ],
+      "id": "2ae837ec-a01c-476e-806a-b002eaa50109",
+      "name": "Pengecekan DB File"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "ref_data",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Get 1 File & Folder Sementara').item.json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1824,
+        704
+      ],
+      "id": "53f13db8-58d2-43c9-a6a9-038612bc4846",
+      "name": "Delete list 1 File & Folder Sementara"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "ref_data",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -2000,
+        352
+      ],
+      "id": "cfc34423-38a1-4e39-8d41-c4caaadb12d2",
+      "name": "Delete list 1 File & Folder Sementara (Folder)",
+      "retryOnFail": false,
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "ref_file",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1200,
+        688
+      ],
+      "id": "89e929f2-ab5e-432c-84a3-13dae42ad3f6",
+      "name": "Mengambil DB ID seluruh File"
+    },
+    {
+      "parameters": {
+        "content": "# 2 : Input Bertahap File yang di Extrak",
+        "height": 304,
+        "width": 800,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1264,
+        576
+      ],
+      "typeVersion": 1,
+      "id": "4fd8b52f-a66b-4b9a-8ed3-616756f04b37",
+      "name": "Sticky Note17"
+    },
+    {
+      "parameters": {
+        "content": "## *File Labeling*\n### Menambahkan kategori *file* agar memudahkan AI mencari *file* yang relevan dengan kategori pertanyaan",
+        "height": 480,
+        "width": 304,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2192,
+        608
+      ],
+      "typeVersion": 1,
+      "id": "261b04f2-bdba-4a8e-a133-0490a400d05b",
+      "name": "Sticky Note18"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# File Name\n{{ $('Download File (Binary)').item.json.nama }}\n##################\n\n# File Contents\n{{ $('Set Text (Flow Merged)').item.json.text }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a document classification AI for SISIP (Tourism Certification System).\n\nYour task is to analyze the file name and file contents to produce a dataset label and generate a descriptive database table name.\n\nReturn ONLY JSON.\n\nOUTPUT FORMAT:\n\n{\n \"category\": \"<DATASET_CATEGORY>\",\n \"table_name\": \"<DATABASE_TABLE_NAME>\",\n \"file_summary\": \"<SHORT_CONTEXT_SUMMARY>\",\n \"confidence\": \"<HIGH|MEDIUM|LOW>\"\n}\n\n--------------------------------\n\nTABLE NAME RULE\n\nGenerate table names using this pattern:\n\nref_<category>_<context>_<year>\n\nor\n\ndata_<category>_<context>_<year>\n\nRules:\n\n1. Use lowercase.\n2. Replace spaces with underscore.\n3. Remove special characters.\n4. Include dataset context such as sector, region, or position.\n5. Include year if available.\n\nExamples:\n\nSKKNI Tourism dataset\nref_skkni_daftar_pariwisata_2025\n\nPBK Barista Bali dataset\ndata_pbk_barista_bali_2023\n\nCertification participants Bali\ndata_sertifikasi_bali_2024\n\n--------------------------------\n\nFILE SUMMARY RULE\n\nCreate a concise but informative summary that helps an AI chatbot understand the dataset context.\n\nThe summary must:\n\n• be short (max ~12 words)  \n• include main topic  \n• include sector or profession  \n• include year if available  \n\nExamples:\n\nSKKNI Pariwisata Indonesia 2025\nData Sertifikasi Barista Bali 2023\nDaftar LSP Pariwisata Indonesia\nData Peserta PBK Barista Jawa Timur\n\n--------------------------------\nAVAILABLE DATASET CATEGORIES\n\n1. SKKNI  \nStandar Kompetensi Kerja Nasional Indonesia.\n\nDocuments that list national competency standards for specific professions.\n\nExamples:\n• daftar SKKNI\n• standar kompetensi\n• unit kompetensi kerja\n\ntable_name_prefix: ref_skkni\n\n\n2. KKNI  \nKerangka Kualifikasi Nasional Indonesia.\n\nDocuments describing competency levels or qualification frameworks.\n\nExamples:\n• KKNI level\n• qualification framework\n• kompetensi level\n\ntable_name_prefix: ref_kkni\n\n\n3. PBK  \nPelatihan Berbasis Kompetensi.\n\nDatasets containing training participants, training programs, or competency-based training activities.\n\nExamples:\n• data peserta pelatihan\n• daftar PBK\n• pelatihan kompetensi\n\ntable_name_prefix: data_pbk\n\n\n4. Peserta Sertifikasi  \nDatasets of participants who took competency certification tests.\n\nExamples:\n• data sertifikasi\n• peserta uji kompetensi\n• hasil sertifikasi\n\ntable_name_prefix: data_sertifikasi\n\n\n5. LSP  \nMaster data of Lembaga Sertifikasi Profesi.\n\nExamples:\n• daftar LSP\n• informasi lembaga sertifikasi\n\ntable_name_prefix: ref_lsp\n\n\n6. LPK / BLK  \nTraining institutions that provide competency training.\n\nExamples:\n• daftar LPK\n• balai latihan kerja\n\ntable_name_prefix: ref_lpk_blk\n\n\n7. Modul  \nTraining or learning materials.\n\nExamples:\n• modul pelatihan\n• buku ajar\n• materi pelatihan\n\ntable_name_prefix: ref_modul\n\n\n8. MUK  \nMateri Uji Kompetensi.\n\nExamples:\n• soal asesmen\n• materi uji kompetensi\n\ntable_name_prefix: ref_muk\n\n\n9. Regulasi  \nGovernment regulations or legal documents.\n\nExamples:\n• peraturan menteri\n• undang-undang\n• surat keputusan\n\ntable_name_prefix: ref_regulasi\n--------------------------------\n\nCONFIDENCE RULE\n\nHIGH\nClear dataset context.\n\nMEDIUM\nContext inferred but not explicit.\n\nLOW\nContext unclear."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        2224,
+        752
+      ],
+      "id": "72c8561f-e3f2-4b4e-9193-38bd94d592ee",
+      "name": "AI Agent Labelling",
+      "retryOnFail": false,
+      "alwaysOutputData": false,
+      "maxTries": 5,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "tableId": "record_manager",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "source_id",
+              "fieldValue": "={{ $('Download File (Binary)').item.json.id }}"
+            },
+            {
+              "fieldId": "content_hash",
+              "fieldValue": "={{ $('Generate Hash').item.json.hash }}"
+            },
+            {
+              "fieldId": "data_type",
+              "fieldValue": "={{ $('Set Text (Flow Merged)').item.json.data_type }}"
+            },
+            {
+              "fieldId": "column_names",
+              "fieldValue": "={{ $('Set Text (Flow Merged)').item.json.column_names || null }}"
+            },
+            {
+              "fieldId": "=file_name",
+              "fieldValue": "={{ $('Download File (Binary)').item.json.nama }}"
+            },
+            {
+              "fieldId": "source_folder",
+              "fieldValue": "={{ $('Input File Bertahap').item.json.path }}"
+            },
+            {
+              "fieldId": "category",
+              "fieldValue": "={{ $('Input File Bertahap').item.json.jenis }}"
+            },
+            {
+              "fieldId": "file_summary",
+              "fieldValue": "={{ $json.output.file_summary }}"
+            },
+            {
+              "fieldId": "table_name",
+              "fieldValue": "={{ $json.output.table_name }}"
+            },
+            {
+              "fieldId": "Confidence",
+              "fieldValue": "={{ $json.output.confidence }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2560,
+        752
+      ],
+      "id": "79902456-e32c-4f9a-9c3a-a5a62b675b1f",
+      "name": "Create Row in Record Manager"
+    },
+    {
+      "parameters": {
+        "jsCode": "function cleanName(name){\n return name\n  .toLowerCase()\n  .replace(/[^a-z0-9]/g,\"_\")\n  .replace(/_+/g,\"_\")\n  .replace(/^_|_$/g,\"\")\n}\n\nfunction detectType(values){\n for(const v of values){\n\n  if(v === null || v === \"\") continue\n\n  const val = String(v).toLowerCase()\n\n  if(val === \"true\" || val === \"false\")\n   return \"BOOLEAN\"\n\n  if(!isNaN(val) && Number.isInteger(Number(val)))\n   return \"INTEGER\"\n\n  if(!isNaN(val))\n   return \"NUMERIC\"\n\n  if(/^\\d{4}[-/]\\d{2}[-/]\\d{2}/.test(val))\n   return \"DATE\"\n }\n\n return \"TEXT\"\n}\n\n// ambil data dari node sebelumnya\nlet rows = $input.first().json.cleaned_rows\nlet columns = $('Set Text (Flow Merged)').first().json.column_names\nconst table = $('AI Agent Labelling').first().json.output.table_name\n\n// normalisasi rows\nif(typeof rows === \"string\"){\n rows = JSON.parse(rows)\n}\n\nif(!Array.isArray(rows)){\n rows = [rows]\n}\n\n// normalisasi column_names\nif(typeof columns === \"string\"){\n columns = JSON.parse(columns)\n}\n\n// generate schema\nlet columnSQL = []\nlet indexSQL = []\nfor(const col of columns){\n const clean = cleanName(col)\n const values = rows.map(r => r[col])\n const type = detectType(values)\n columnSQL.push(`${clean} ${type} NULL`)\n if(type !== \"TEXT\"){\n  indexSQL.push(\n   `CREATE INDEX IF NOT EXISTS idx_${table}_${clean} ON public.${table} (${clean});`\n  )\n }\n}\n\n// index penting untuk foreign key\nindexSQL.push(\n `CREATE INDEX IF NOT EXISTS idx_${table}_record_manager_id ON public.${table} (record_manager_id);`\n)\n\n// CREATE TABLE\nconst createTableSQL = `\nCREATE TABLE IF NOT EXISTS public.${table} (\n id BIGINT GENERATED BY DEFAULT AS IDENTITY NOT NULL,\n record_manager_id BIGINT NULL,\n ${columnSQL.join(\",\\n\")},\n created_at TIMESTAMPTZ DEFAULT now(),\n CONSTRAINT ${table}_pkey PRIMARY KEY (id),\n CONSTRAINT ${table}_record_manager_id_fkey\n FOREIGN KEY (record_manager_id)\n REFERENCES record_manager(id)\n ON DELETE CASCADE\n\n);\n`\n\n// ENABLE RLS\nconst rlsSQL = `\nALTER TABLE public.${table}\nENABLE ROW LEVEL SECURITY;\n`\n\n// POLICY SELECT\nconst policyReadSQL = `\nCREATE POLICY IF NOT EXISTS \"policy_read_${table}\"\nON public.${table}\nFOR SELECT\nUSING (true);\n`\n\n// POLICY INSERT\nconst policyInsertSQL = `\nCREATE POLICY IF NOT EXISTS \"policy_insert_${table}\"\nON public.${table}\nFOR INSERT\nWITH CHECK (true);\n`\n\nreturn [{\n json:{\n  create_sql:createTableSQL,\n  index_sql:indexSQL.join(\"\\n\"),\n  rls_sql: rlsSQL,\n  policy_read_sql: policyReadSQL,\n  policy_insert_sql: policyInsertSQL,\n  table_name:table\n }\n}]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3056,
+        1184
+      ],
+      "id": "9066dccd-fe1c-415c-b18e-e463b3331a23",
+      "name": "Generate SQL Schema"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "{{$json.create_sql}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        3264,
+        976
+      ],
+      "id": "b5d60a1a-55e2-410a-9666-a38ff0abda3c",
+      "name": "Create Table From SQL Schema"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "{{ $('Generate SQL Schema').item.json.index_sql }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        3264,
+        1184
+      ],
+      "id": "8b7c1beb-484e-41a4-8dd9-64806e3dd768",
+      "name": "Create Index From SQL Schema"
+    },
+    {
+      "parameters": {
+        "jsCode": "function cleanName(name){\n return name\n  .toLowerCase()\n  .replace(/[^a-z0-9]/g,\"_\")\n  .replace(/_+/g,\"_\")\n  .replace(/^_|_$/g,\"\")\n}\n\nfunction sqlValue(v){\n if(v === null) return \"NULL\"\n if(typeof v === \"boolean\") return v ? \"TRUE\" : \"FALSE\"\n if(typeof v === \"number\") return v\n return `'${v}'`\n}\n\nconst rows = $('Cleaning Tabular Data').first().json.cleaned_rows\n\nconst table = $('AI Agent Labelling').first().json.output.table_name\n\nconst recordManagerId = $('Create Row in Record Manager').first().json.id\n\nconst columns = Object.keys(rows[0])\n\nconst cleanColumns = columns.map(c => cleanName(c))\n\n// tambahkan kolom record_manager_id\nconst finalColumns = [...cleanColumns, \"record_manager_id\"]\n\nlet valuesSQL = []\n\nfor(const row of rows){\n\n const values = columns.map(c => sqlValue(row[c]))\n\n // tambahkan value record_manager_id di setiap row\n values.push(sqlValue(recordManagerId))\n\n valuesSQL.push(`(${values.join(\",\")})`)\n}\n\nconst insertSQL = `\nINSERT INTO public.${table}\n(${finalColumns.join(\",\")})\nVALUES\n${valuesSQL.join(\",\\n\")}\n;\n`\n\nreturn [{\n json:{\n  insert_sql: insertSQL\n }\n}]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3472,
+        976
+      ],
+      "id": "73ab2cad-09ba-4f4a-b152-54386070ea20",
+      "name": "Generate Insert Queries"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "{{ $json.insert_sql }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        3472,
+        1184
+      ],
+      "id": "4869b911-e044-4eb9-9522-fde27b5a05c3",
+      "name": "Execute a SQL query"
+    },
+    {
+      "parameters": {
+        "operation": "deleteTable",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "={{ $('Search in Record Manager').item.json.table_name }}",
+          "mode": "name"
+        },
+        "deleteCommand": "drop",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1888,
+        928
+      ],
+      "id": "c6f13c52-2715-47f9-9151-9ca35dc1f22c",
+      "name": "Delete table or rows"
+    },
+    {
+      "parameters": {
+        "jsCode": "function excelDateToISO(serial){\n if(typeof serial !== \"number\") return serial\n if(serial < 40000 || serial > 50000) return serial\n const excelEpoch = new Date(Date.UTC(1899,11,30))\n const date = new Date(excelEpoch.getTime() + serial*86400000)\n return date.toISOString().slice(0,10)\n}\n\nfunction cleanString(value){\n if(value === null || value === undefined) return null\n if(typeof value !== \"string\") return value\n let v = value.trim()\n if(v === \"\") return null\n // escape single quote supaya aman di SQL\n v = v.replace(/'/g,\"''\")\n return v\n}\n\nfunction convertKompeten(value){\n if(value === null || value === undefined) return null\n const v = String(value).trim().toUpperCase()\n if(v === \"K\") return true\n if(v === \"BK\") return false\n return null\n}\n\nfunction cleanValue(value){\n if(value === \"\" || value === undefined) return null\n // Excel serial date\n if(typeof value === \"number\"){\n  const converted = excelDateToISO(value)\n  return converted\n }\n if(!isNaN(value) && Number(value) > 40000 && Number(value) < 50000){\n  return excelDateToISO(Number(value))\n }\n return cleanString(value)\n}\n\n// ======================\n// MAIN\n// ======================\n\nlet rows = $('Set Text (Flow Merged)').first().json.data_rows\nif(typeof rows === \"string\"){\n rows = JSON.parse(rows)\n}\nif(!Array.isArray(rows)){\n rows = [rows]\n}\n\nconst cleanedRows = []\nfor(const row of rows){\n const newRow = {}\n for(const key of Object.keys(row)){\n  const val = row[key]\n  // khusus kolom K/BK\nif(key.toLowerCase().includes(\"k/bk\")){\n   newRow[key] = convertKompeten(val)\n   continue\n  }\n  newRow[key] = cleanValue(val)\n }\n cleanedRows.push(newRow)\n}\nreturn [{\n json:{\n  cleaned_rows: cleanedRows\n }\n}]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3056,
+        976
+      ],
+      "id": "61d2dea8-9815-467b-afb2-b81b8b710db8",
+      "name": "Cleaning Tabular Data"
+    },
+    {
+      "parameters": {
+        "content": "# 4 : Penomoran *File* ke *Database*\n## Jika *file* belum ada, beri tanda pada *file* di *database*\n## Jika *file* sudah ada & terjadi perubahan, hapus data lama, beri tanda baru pada *file*\n## Identitas File berupa ID Drive, Nama File, Source/Path File, Tipe data, Nama DB, Hash, Kategori file, dan Label file",
+        "height": 720,
+        "width": 1296,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1632,
+        384
+      ],
+      "typeVersion": 1,
+      "id": "74c235c7-40d8-4b2d-a2a3-f9faee2b70f3",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "49077d83-64b3-4830-abd6-eaca10d59d8c",
+              "name": "content",
+              "value": "={{ $('Set Up Text to be Hashed').item.json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3024,
+        352
+      ],
+      "id": "a227e4db-d058-44db-956f-e6b14cf74204",
+      "name": "Persiapan Text menuju Embedding"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Ambil teks dari berbagai kemungkinan field\nlet text = $json.text ?? $json.content ?? $json.cleaned_text ?? $json.data ?? \"\";\n\n// Jika masih bukan string, konversi\nif (typeof text !== 'string') {\n  text = String(text ?? \"\");\n}\n\n// Jika kosong, return langsung agar tidak error\nif (text.trim() === \"\") {\n  return [{ json: { cleaned_text: \"\" } }];\n}\n\n// ========== TAMBAHAN UNTUK FIX UNICODE ERROR ==========\n// Hapus karakter null (\\u0000)\ntext = text.replace(/\\0/g, '');\n\n// Perbaiki atau hapus lone surrogate (Unicode invalid)\nif (typeof text.toWellFormed === 'function') {\n    text = text.toWellFormed();\n} else {\n    text = text.replace(/[\\uD800-\\uDBFF](?![\\uDC00-\\uDFFF])/g, '')\n               .replace(/(?<![\\uD800-\\uDBFF])[\\uDC00-\\uDFFF]/g, '');\n}\n// =====================================================\n\n// normalize newline\ntext = text.replace(/\\r/g, \"\\n\");\n\n// remove excessive whitespace\ntext = text.replace(/[ \\t]+/g, \" \");\n\n// remove multiple newlines\ntext = text.replace(/\\n{3,}/g, \"\\n\\n\");\n\n// remove page numbers\ntext = text.replace(/halaman\\s*\\d+\\s*(dari|\\/)\\s*\\d+/gi, \"\");\n\n// remove standalone page numbers\ntext = text.replace(/\\n\\d+\\n/g, \"\\n\");\n\n// fix bullet list\ntext = text.replace(/\\n\\d+\\.\\s*\\n/g, \"\\n- \");\n\n// remove weird characters\ntext = text.replace(/[•▪■□]/g, \"-\");\n\n// trim\ntext = text.trim();\n\n// Section untuk setiap bab\ntext = text.replace(/BAB\\s+[IVX]+/gi, \"\\n\\n[SECTION] $&\");\n\n// mempertahankan nomor dan perihal surat \ntext = text.replace(/nomor\\s*:/gi, \"\\nNomor:\");\ntext = text.replace(/perihal\\s*:/gi, \"\\nPerihal:\");\n\nreturn [{ json: { cleaned_text: text } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3184,
+        352
+      ],
+      "id": "2a3f323b-a7c3-4ad3-ab7d-345e6796f18c",
+      "name": "Pembersihan Text"
+    },
+    {
+      "parameters": {
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "file_id",
+                "value": "={{ $('Input File Bertahap').item.json.id }}"
+              },
+              {
+                "name": "file_name",
+                "value": "={{ $('Input File Bertahap').item.json.nama }}"
+              },
+              {
+                "name": "category",
+                "value": "={{ $('AI Agent Labelling').item.json.output.category }}"
+              },
+              {
+                "name": "file_summary",
+                "value": "={{ $('AI Agent Labelling').item.json.output.file_summary }}"
+              },
+              {
+                "name": "Confidence",
+                "value": "={{ $('AI Agent Labelling').item.json.output.confidence }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        3344,
+        496
+      ],
+      "id": "8a8c8e95-3355-408a-bee7-ccf6373c5bc4",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkSize": 900,
+        "chunkOverlap": 150,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        3520,
+        624
+      ],
+      "id": "8e2a6dd9-9612-4c36-92d6-08deb2052282",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        3360,
+        352
+      ],
+      "id": "33263f4b-943b-4583-9cdd-c65d84d0d7fb",
+      "name": "Knowledge Base (Vector DB)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3696,
+        352
+      ],
+      "id": "fecc9f13-fe0e-4d6c-9632-ed12bdffb20c",
+      "name": "Text File Processed (Done)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3696,
+        1184
+      ],
+      "id": "e6e9d3ef-1afe-43ca-befb-b7a1f6231589",
+      "name": "Tabular File Processed (Done)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3904,
+        1184
+      ],
+      "id": "d7655516-4789-4089-be4b-505268272c33",
+      "name": "Proceed to Next File (if any)"
+    },
+    {
+      "parameters": {
+        "content": "# 5 Pemrosesan data Text ke Database\n### data yang masuk akan dibersihkan terlebih dahulu dan diproses untuk masuk dalam proses chungking dan konversi menuju data numerik dan dimasukkan ke dalam database vektor",
+        "height": 672,
+        "width": 688
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2976,
+        96
+      ],
+      "typeVersion": 1,
+      "id": "a287fec3-b9c0-4fbc-81b5-a51f88bc5f10",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## *File Embedding*\n### Melakukan proses Chunking dan Embedding file text, dan memasukkan vector pada DB Documents",
+        "height": 528,
+        "width": 336,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3312,
+        224
+      ],
+      "typeVersion": 1,
+      "id": "30afc7ed-163d-419f-825b-fc76395d7fcb",
+      "name": "Sticky Note19"
+    },
+    {
+      "parameters": {
+        "content": "# 5 Pemrosesan data Tabular ke Database\n### Sistem akan mengambil isi data, header, dan index data lalu membuat header berdasarkan input header dan menyesuaikan jenis header\n### Data yang masuk akan dibersihkan terlebih dahulu agar sesuai dengan regulasi eksekusi kode *javascript*",
+        "height": 560,
+        "width": 688
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2976,
+        800
+      ],
+      "typeVersion": 1,
+      "id": "308aeb8a-6ab5-46bb-9a86-5ba2d23e13d7",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        1184
+      ],
+      "id": "7d298497-c661-476f-8528-920320bbe5c0",
+      "name": "Not Modified File Processed (Done)"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "ref_file",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1648,
+        912
+      ],
+      "id": "868de081-b045-400c-a321-8a6cd30eda17",
+      "name": "Pengambilan DB File Pengecekan",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "record_manager",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Search in Record Manager').item.json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2048,
+        928
+      ],
+      "id": "fd882817-9d1f-4435-a8d4-3d285ccaf188",
+      "name": "Delete a row"
+    },
+    {
+      "parameters": {
+        "model": "deepseek-v4-flash",
+        "options": {}
+      },
+      "type": "n8n-nodes-deepseek-reasoner.deepSeekReasoner",
+      "typeVersion": 1,
+      "position": [
+        2224,
+        944
+      ],
+      "id": "f1f02176-9bd4-48a9-9860-a718da4737dd",
+      "name": "DeepsSeek Agent (Labelling Data)"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        3360,
+        624
+      ],
+      "id": "5ffe27d7-5f17-4be4-bd9d-7a6ba056352d",
+      "name": "HuggingFace Agent (Embedding Data)"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ac8f0f0e-a9da-484f-92f6-113eb5fb783a",
+                    "leftValue": "={{ $('Set Text (Flow Merged)').item.json.data_type }}",
+                    "rightValue": "text",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text data"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Text (Flow Merged)').item.json.data_type }}",
+                    "rightValue": "tabular",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "0b02d4c9-57f4-4d03-911c-70f8a4a6ae55"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Tabular data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        2736,
+        752
+      ],
+      "id": "3c6a537d-ca41-44a4-be95-64d43bf65f31",
+      "name": "Check Tabular / Text ?"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n \"category\":\"<ADD DATA>\",\n \"table_name\":\"<ADD DATA>\",\n \"file_summary\":\"<ADD DATA>\",\n \"confidence\":\"<ADD DATA>\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2368,
+        944
+      ],
+      "id": "71341676-da0c-4719-81c8-597bd982c251",
+      "name": "Output Parser (File Category & Summary)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        416
+      ],
+      "id": "c24e5f66-3d17-4718-a931-e8879386215a",
+      "name": "ingestion Pipeline Done"
+    },
+    {
+      "parameters": {
+        "mode": "perItem",
+        "minutesSaved": 0.1
+      },
+      "type": "n8n-nodes-base.timeSaved",
+      "typeVersion": 1,
+      "position": [
+        -2000,
+        912
+      ],
+      "id": "07a7629c-0f17-4d19-8b7b-371e53fbe5fe",
+      "name": "Data Check Time Track"
+    },
+    {
+      "parameters": {
+        "mode": "perItem",
+        "minutesSaved": 1
+      },
+      "type": "n8n-nodes-base.timeSaved",
+      "typeVersion": 1,
+      "position": [
+        -816,
+        688
+      ],
+      "id": "525ebe56-dfe9-4258-a3ca-0a2cf1fc5b32",
+      "name": "Data Analyst Time Track"
+    },
+    {
+      "parameters": {
+        "mode": "perItem",
+        "minutesSaved": 5
+      },
+      "type": "n8n-nodes-base.timeSaved",
+      "typeVersion": 1,
+      "position": [
+        1696,
+        752
+      ],
+      "id": "c74e02de-a177-4652-a7c1-15c7372a8821",
+      "name": "New Data Extraction Time Track"
+    },
+    {
+      "parameters": {
+        "mode": "perItem",
+        "minutesSaved": 3
+      },
+      "type": "n8n-nodes-base.timeSaved",
+      "typeVersion": 1,
+      "position": [
+        1696,
+        928
+      ],
+      "id": "f92a0d22-65d2-4953-b8b8-82ec48291496",
+      "name": "Changed Data Extraction Time Track"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2192,
+        528
+      ],
+      "id": "8d8fe3c5-dd0a-4023-9f13-dbaa12de32e0",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "871ae073-028a-4aed-b7e8-d1be7c260f01",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "ae610e22-5f72-4485-b738-801f9c1f7b8e",
+              "name": "current_path",
+              "value": "={{ $('Delete list 1 File & Folder Sementara (Folder)').item.json.path + \"/\" + $json.name}}",
+              "type": "string"
+            },
+            {
+              "id": "c96850ec-1636-4f11-ae39-6ef264c24f44",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "b2741586-3a0c-4be8-9d03-ce16a6e67dd9",
+              "name": "mimeType",
+              "value": "={{ $json.mimeType }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1584,
+        352
+      ],
+      "id": "b638e928-a8ac-4fec-8558-b874fbbdeaf9",
+      "name": "Set Root Folder"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Get 1 File & Folder Sementara').item.json.id }}",
+            "mode": "id"
+          }
+        },
+        "options": {
+          "fields": [
+            "id",
+            "name",
+            "mimeType"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1792,
+        352
+      ],
+      "id": "299c4ba3-302e-471c-bb1e-11084c0c6baa",
+      "name": "Search files and folders",
+      "alwaysOutputData": false
+    }
+  ],
+  "connections": {
+    "Search in Record Manager": {
+      "main": [
+        [
+          {
+            "node": "Check if the File is New, Modified or Not",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Hash": {
+      "main": [
+        [
+          {
+            "node": "Search in Record Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check File Format": {
+      "main": [
+        [
+          {
+            "node": "Convert to ZIP",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract (Get) from Google Docs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract from PDF",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract from CSV",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract from Excel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract from ODS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from CSV": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from Excel": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Data": {
+      "main": [
+        [
+          {
+            "node": "Extract Column Names (Table Schema)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Concatenate All Rows into One String",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Text for Tabular Data": {
+      "main": [
+        [
+          {
+            "node": "Set Text (Flow Merged)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from PDF": {
+      "main": [
+        [
+          {
+            "node": "Set Up Text to be Hashed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract (Get) from Google Docs": {
+      "main": [
+        [
+          {
+            "node": "Set Up Text to be Hashed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Up Text to be Hashed": {
+      "main": [
+        [
+          {
+            "node": "Set Text (Flow Merged)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Concatenate All Rows into One String": {
+      "main": [
+        [
+          {
+            "node": "Merge Table Content & Schema",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Extract Column Names (Table Schema)": {
+      "main": [
+        [
+          {
+            "node": "Merge Table Content & Schema",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File (Binary)": {
+      "main": [
+        [
+          {
+            "node": "Check File Format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Table Content & Schema": {
+      "main": [
+        [
+          {
+            "node": "Set Text for Tabular Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if the File is New, Modified or Not": {
+      "main": [
+        [
+          {
+            "node": "New Data Extraction Time Track",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Changed Data Extraction Time Track",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Not Modified File Processed (Done)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Text (Flow Merged)": {
+      "main": [
+        [
+          {
+            "node": "Generate Hash",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to ZIP": {
+      "main": [
+        [
+          {
+            "node": "Decompress",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract DOCX Content": {
+      "main": [
+        [
+          {
+            "node": "Set Up Text to be Hashed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decompress": {
+      "main": [
+        [
+          {
+            "node": "Extract DOCX Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from ODS": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pencarian folder 'AI SISIP'": {
+      "main": [
+        [
+          {
+            "node": "Set Path Folder 'AI SISIP'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input folder dan File Sementara": {
+      "main": [
+        [
+          {
+            "node": "Get 1 File & Folder Sementara",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Path Folder 'AI SISIP'": {
+      "main": [
+        [
+          {
+            "node": "Input folder dan File Sementara",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pegecekan DB File & Folder Sementara": {
+      "main": [
+        [
+          {
+            "node": "Mengambil DB ID seluruh File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Data Check Time Track",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get 1 File & Folder Sementara": {
+      "main": [
+        [
+          {
+            "node": "Pegecekan DB File & Folder Sementara",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pengecekan Jenis File & Folder Sementara": {
+      "main": [
+        [
+          {
+            "node": "Delete list 1 File & Folder Sementara",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete list 1 File & Folder Sementara",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete list 1 File & Folder Sementara (Folder)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Pengambilan DB File Pengecekan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input DB File": {
+      "main": [
+        [
+          {
+            "node": "Delete list 1 File & Folder Sementara",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input File Bertahap": {
+      "main": [
+        [
+          {
+            "node": "ingestion Pipeline Done",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Data Analyst Time Track",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pengecekan DB File": {
+      "main": [
+        [
+          {
+            "node": "Delete list 1 File & Folder Sementara",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Input DB File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete list 1 File & Folder Sementara": {
+      "main": [
+        [
+          {
+            "node": "Get 1 File & Folder Sementara",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete list 1 File & Folder Sementara (Folder)": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mengambil DB ID seluruh File": {
+      "main": [
+        [
+          {
+            "node": "Input File Bertahap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent Labelling": {
+      "main": [
+        [
+          {
+            "node": "Create Row in Record Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Row in Record Manager": {
+      "main": [
+        [
+          {
+            "node": "Check Tabular / Text ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate SQL Schema": {
+      "main": [
+        [
+          {
+            "node": "Create Table From SQL Schema",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Table From SQL Schema": {
+      "main": [
+        [
+          {
+            "node": "Create Index From SQL Schema",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Index From SQL Schema": {
+      "main": [
+        [
+          {
+            "node": "Generate Insert Queries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Insert Queries": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Tabular File Processed (Done)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete table or rows": {
+      "main": [
+        [
+          {
+            "node": "Delete a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cleaning Tabular Data": {
+      "main": [
+        [
+          {
+            "node": "Generate SQL Schema",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Persiapan Text menuju Embedding": {
+      "main": [
+        [
+          {
+            "node": "Pembersihan Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pembersihan Text": {
+      "main": [
+        [
+          {
+            "node": "Knowledge Base (Vector DB)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Knowledge Base (Vector DB)",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Knowledge Base (Vector DB)": {
+      "main": [
+        [
+          {
+            "node": "Text File Processed (Done)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text File Processed (Done)": {
+      "main": [
+        [
+          {
+            "node": "Proceed to Next File (if any)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tabular File Processed (Done)": {
+      "main": [
+        [
+          {
+            "node": "Proceed to Next File (if any)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Proceed to Next File (if any)": {
+      "main": [
+        [
+          {
+            "node": "Input File Bertahap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Not Modified File Processed (Done)": {
+      "main": [
+        [
+          {
+            "node": "Input File Bertahap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pengambilan DB File Pengecekan": {
+      "main": [
+        [
+          {
+            "node": "Pengecekan DB File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a row": {
+      "main": [
+        [
+          {
+            "node": "AI Agent Labelling",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepsSeek Agent (Labelling Data)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent Labelling",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HuggingFace Agent (Embedding Data)": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Knowledge Base (Vector DB)",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Tabular / Text ?": {
+      "main": [
+        [
+          {
+            "node": "Persiapan Text menuju Embedding",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cleaning Tabular Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Output Parser (File Category & Summary)": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent Labelling",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ingestion Pipeline Done": {
+      "main": [
+        []
+      ]
+    },
+    "Data Check Time Track": {
+      "main": [
+        [
+          {
+            "node": "Pengecekan Jenis File & Folder Sementara",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data Analyst Time Track": {
+      "main": [
+        [
+          {
+            "node": "Download File (Binary)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "New Data Extraction Time Track": {
+      "main": [
+        [
+          {
+            "node": "AI Agent Labelling",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Changed Data Extraction Time Track": {
+      "main": [
+        [
+          {
+            "node": "Delete table or rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Pencarian folder 'AI SISIP'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Root Folder": {
+      "main": [
+        [
+          {
+            "node": "Input folder dan File Sementara",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "Set Root Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "dynamic",
+    "errorWorkflow": "2qHdiruE9x4OnfMciDiWD",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Asia/Jakarta"
+  },
+  "tags": []
+}

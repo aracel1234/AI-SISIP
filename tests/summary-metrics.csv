@@ -1,0 +1,5 @@
+metric,target,hasil_aktual,status
+Akurasi Klasifikasi Intent,> 85%,95%,Memenuhi
+Akurasi Retrieval (Precision@K),> 80%,"80,87%",Memenuhi
+Durasi eksekusi alur kerja,< 10 detik,"9,53 detik",Memenuhi
+Workflow execution success rate,Tidak dicantumkan pada Tabel 6.13,100% (111/111),Berhasil pada periode pengujian

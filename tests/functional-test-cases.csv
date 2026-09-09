@@ -1,0 +1,13 @@
+id,jenis_input,pesan_uji,harapan_output,status,response_time
+TC-01,Pertanyaan naratif,Apa itu sertifikasi PBK?,Definisi PBK sesuai dokumen,Berhasil,25 Detik
+TC-01b,Pertanyaan naratif,Apa itu KKNI?,Definisi KKNI sesuai dokumen,Berhasil,31 Detik
+TC-01c,Pertanyaan naratif,Apa itu Evaluasi Kegiatan acara dan bagaimana cara merancangnya,Pengertian Evaluasi Kegiatan acara dan cara merancangnya,Berhasil,18 Detik
+TC-02,Pertanyaan statistik,Berapa jumlah peserta sertifikasi di Bali?,Jumlah Peserta sebanyak 143 Orang,Berhasil,9 Detik
+TC-02b,Pertanyaan statistik,Berapa total peserta PBK tahun 2025?,Jumlah Peserta sebanyak 622 Orang,Berhasil,8 Detik
+TC-03,Sapaan/Greeting,Halo SISIP,Respons sapaan dan menawarkan bantuan,Berhasil,3 Detik
+TC-03b,Sapaan/Greeting,Assalamualaikum SISIP,Respons sapaan dan menawarkan bantuan,Berhasil,3 Detik
+TC-04,Out-of-scope,Apa itu blockchain?,Respons mengarahkan kembali ke topik,Berhasil,4 Detik
+TC-04b,Out-of-scope,Bagaimana cara investasi saham?,Respons mengarahkan kembali ke topik,Berhasil,6 Detik
+TC-05,Pesan < 120 detik,"Kirim pesan, lalu melakukan Re-Eksekusi dibawah 120 Detik",Kedua pesan diproses dan direspons,Berhasil,75 Detik
+TC-06,Pesan = 120 detik,"Kirim pesan, tunggu tepat 120 detik, kirim lagi",Ketiga pesan diproses dan direspons,Berhasil,124 Detik
+TC-07,Pesan > 120 detik,"Kirim pesan, tunggu 3 menit, kirim lagi",Pesan Keempat diabaikan (tidak direspons),Berhasil,161 Detik (Skipped)

@@ -1,0 +1,41 @@
+id,jenis,pertanyaan,durasi_detik
+N-01,Narrative,Berapa total peserta sertifikasi kompetensi tahun 2025?,18.15
+N-02,Narrative,Berapa jumlah LSP di Indonesia?,18.229
+N-03,Narrative,Berapa jumlah LPK/BLK di Indonesia?,12.134
+N-04,Narrative,Berapa jumlah peserta PBK di tahun 2025?,20.323
+N-05,Narrative,Berapa jumlah peserta PBK di tahun 2026?,22.981
+N-06,Narrative,Berapa total peserta sertifikasi di Bali?,22.779
+N-07,Narrative,Berapa total peserta PBK Pemandu Wisata Tirta tahun 2026?,38.383
+N-08,Narrative,Berapa jumlah modul PBK yang tersedia?,28.356
+N-09,Narrative,Berapa total peserta sertifikasi kompetensi tahun 2025 di seluruh Indonesia?,7.351
+N-10,Narrative,Berapa rata-rata peserta PBK per tahun?,26.486
+S-01,Statistical,Berapa total peserta sertifikasi kompetensi tahun 2025?,9.823
+S-02,Statistical,Berapa jumlah LSP di Indonesia?,10.638
+S-03,Statistical,Berapa jumlah LPK/BLK di Indonesia?,8.264
+S-04,Statistical,Berapa jumlah peserta PBK di tahun 2025?,9.386
+S-05,Statistical,Berapa jumlah peserta PBK di tahun 2026?,8.099
+S-06,Statistical,Berapa total peserta sertifikasi di Bali?,8.497
+S-07,Statistical,Berapa total peserta PBK Pemandu Wisata Tirta tahun 2026?,5.581
+S-08,Statistical,Berapa jumlah modul PBK yang tersedia?,11.244
+S-09,Statistical,Berapa total peserta sertifikasi kompetensi tahun 2025 di seluruh Indonesia?,5.754
+S-10,Statistical,Berapa rata-rata peserta PBK per tahun?,7.59
+G-01,General,Halo,4.796
+G-02,General,Selamat pagi,3.655
+G-03,General,Hai,3.65
+G-04,General,Selamat siang,4.227
+G-05,General,Assalamualaikum,4.287
+G-06,General,Hello,3.649
+G-07,General,"Hi, How Are You?",4.253
+G-08,General,Apa kabar?,4.174
+G-09,General,Selamat malam,3.32
+G-10,General,Halo ada yang bisa dibantu?,4.558
+O-01,Out-of-Scope,Apa itu blockchain?,4.102
+O-02,Out-of-Scope,Bagaimana cara daftar kuliah?,3.774
+O-03,Out-of-Scope,Berapa harga emas hari ini?,3.766
+O-04,Out-of-Scope,Apa itu kecerdasan buatan?,3.882
+O-05,Out-of-Scope,Bagaimana cara investasi saham?,3.399
+O-06,Out-of-Scope,Siapa presiden Indonesia?,3.819
+O-07,Out-of-Scope,Bagaimana cara membuat kue?,3.404
+O-08,Out-of-Scope,Apa itu metaverse?,4.028
+O-09,Out-of-Scope,Apa saja jurusan di UB?,6.383
+O-10,Out-of-Scope,Berapa suhu di Jakarta hari ini?,4.071

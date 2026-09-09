@@ -1,0 +1,699 @@
+{
+  "name": "Workflow Data Deletion Pipeline Chatbot SISIP",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# *Data Deletion Pipeline*\n## *Pipeline* untuk menghapus *file* pada *folder \"Trash\"* sekaligus *knowledge (vector)* yang ada di dalamnya",
+        "height": 208,
+        "width": 448,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2304,
+        352
+      ],
+      "typeVersion": 1,
+      "id": "a6781491-fd0b-4cb2-9f19-70aafeb5341c",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "documents",
+        "filterType": "string",
+        "filterString": "=metadata->>file_id=like.*{{ $('Loop Over Trash Files').item.json.id }}*"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        512
+      ],
+      "id": "f6a0138c-bc78-4522-9662-8571a4cbf03a",
+      "name": "Delete Trash Vectors",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "record_manager",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Search Trash File in Record Manager').item.json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        272,
+        512
+      ],
+      "id": "01be5f9d-00b2-47fb-96dc-a3d24fff84cd",
+      "name": "Delete from Record Manager",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1056,
+        416
+      ],
+      "id": "3b7760b7-0146-446a-8b13-315397619da1",
+      "name": "Loop Over Trash Files"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "83c6b42c-c0fc-4042-a02d-6697400d6b90",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -512,
+        496
+      ],
+      "id": "25a124d3-1ebb-430c-b917-5da0bdcd529f",
+      "name": "If Vectors/Rows Exist"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "record_manager",
+        "limit": 1,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "source_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Loop Over Trash Files').item.json.google_drive_file_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -672,
+        416
+      ],
+      "id": "d38c0cde-f807-4e4f-a12a-8dc594dbf599",
+      "name": "Search Trash File in Record Manager",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.data_type }}",
+                    "rightValue": "tabular",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "bbf58b65-223f-42e3-af7b-bcb92525814e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Tabular"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "fe097093-0951-45d7-8905-86ed4d99cc6c",
+                    "leftValue": "={{ $json.data_type }}",
+                    "rightValue": "text",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -352,
+        416
+      ],
+      "id": "0abca597-45a3-4029-8d52-137f477e7be2",
+      "name": "Check File Format (Tabular / Text)"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "trash_data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        64,
+        512
+      ],
+      "id": "9047e2a4-63db-44d5-a2c1-fae8e145d7ef",
+      "name": "Aggregate Trash Data",
+      "notesInFlow": true,
+      "notes": "to show which vectors/data are deleted"
+    },
+    {
+      "parameters": {
+        "content": "# 2 : Pengecekan _File_ _Dalam_ _Database_\n## Apakah _file_ benar ada di _database_?\n## Apa format _file_-nya?\n",
+        "height": 416,
+        "width": 672,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -896,
+        256
+      ],
+      "typeVersion": 1,
+      "id": "11533078-b2f3-466e-8a0d-4dc5bdc248e2",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "content": "# 3 : Penghapusan _File_ dari _Database_\n",
+        "height": 432,
+        "width": 640,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -192,
+        240
+      ],
+      "typeVersion": 1,
+      "id": "10c2b756-6002-4aa8-8dc5-892853232924",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        32,
+        64
+      ],
+      "id": "3b7f888c-34ac-4af1-8dcd-90d1941eab7f",
+      "name": "Continue to Next Trash File (if any)"
+    },
+    {
+      "parameters": {
+        "operation": "deleteFile",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Loop Over Trash Files').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -160,
+        64
+      ],
+      "id": "437024a1-6c5e-4446-82c6-2c90476c4c95",
+      "name": "Delete File from Folder"
+    },
+    {
+      "parameters": {
+        "content": "# 1 : Pengecekan Berkala dari Google Drive",
+        "height": 544,
+        "width": 576
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1696,
+        176
+      ],
+      "typeVersion": 1,
+      "id": "abad9817-7cba-4d57-82bb-b95938eef246",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{$env.GOOGLE_DRIVE_FOLDER_ID}}",
+            "mode": "id"
+          }
+        },
+        "options": {
+          "fields": [
+            "id",
+            "name",
+            "mimeType"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1472,
+        320
+      ],
+      "id": "af02260a-6aec-4135-a8b1-2038788ae58d",
+      "name": "Pencarian folder 'AI SISIP' (Trash)"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "Trash",
+        "limit": 1,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $json.id }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1472,
+        496
+      ],
+      "id": "cf541af4-b498-4a41-87ff-12d0e8713d01",
+      "name": "Pencarian Folder Trash"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $json.id }}",
+            "mode": "id"
+          },
+          "whatToSearch": "files"
+        },
+        "options": {
+          "fields": [
+            "id",
+            "name",
+            "mimeType"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1296,
+        496
+      ],
+      "id": "960f82a5-07a6-440d-a606-b63c21c4e634",
+      "name": "Pencarian File Trash",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1296,
+        320
+      ],
+      "id": "074e63ca-8a99-42c8-be11-84e505240a2f",
+      "name": "Input 1 DB File dan Folder Sementara (Trash)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f45c954f-1d87-445d-92d0-bf279dc3118d",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -848,
+        416
+      ],
+      "id": "fcafe07d-2874-4429-a486-43c68441e192",
+      "name": "Pengecekan DB yang di ambil"
+    },
+    {
+      "parameters": {
+        "operation": "deleteTable",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "={{ $('Search Trash File in Record Manager').item.json.table_name }}",
+          "mode": "name"
+        },
+        "deleteCommand": "drop",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -144,
+        336
+      ],
+      "id": "e812b5f0-7593-4b90-9faf-aa73825c4462",
+      "name": "Delete table from trash file in record manager"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -880,
+        80
+      ],
+      "id": "622d1b4e-044d-48f0-a6b1-cc75b7f3effd",
+      "name": "Deletion Pipeline Done"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "months",
+              "monthsInterval": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1648,
+        320
+      ],
+      "id": "9ccc099f-aeba-497d-892e-5dc890140812",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "connections": {
+    "Delete Trash Vectors": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Trash Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete from Record Manager": {
+      "main": [
+        [
+          {
+            "node": "Delete File from Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Trash Files": {
+      "main": [
+        [
+          {
+            "node": "Deletion Pipeline Done",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Pengecekan DB yang di ambil",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Vectors/Rows Exist": {
+      "main": [
+        [
+          {
+            "node": "Check File Format (Tabular / Text)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete File from Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Trash File in Record Manager": {
+      "main": [
+        [
+          {
+            "node": "If Vectors/Rows Exist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check File Format (Tabular / Text)": {
+      "main": [
+        [
+          {
+            "node": "Delete table from trash file in record manager",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete Trash Vectors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Trash Data": {
+      "main": [
+        [
+          {
+            "node": "Delete from Record Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Continue to Next Trash File (if any)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Trash Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete File from Folder": {
+      "main": [
+        [
+          {
+            "node": "Continue to Next Trash File (if any)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pencarian folder 'AI SISIP' (Trash)": {
+      "main": [
+        [
+          {
+            "node": "Input 1 DB File dan Folder Sementara (Trash)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pencarian Folder Trash": {
+      "main": [
+        [
+          {
+            "node": "Pencarian File Trash",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pencarian File Trash": {
+      "main": [
+        [
+          {
+            "node": "Input 1 DB File dan Folder Sementara (Trash)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input 1 DB File dan Folder Sementara (Trash)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Trash Files",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Pencarian Folder Trash",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pengecekan DB yang di ambil": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Trash Files",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search Trash File in Record Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete table from trash file in record manager": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Trash Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Pencarian folder 'AI SISIP' (Trash)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "tags": []
+}

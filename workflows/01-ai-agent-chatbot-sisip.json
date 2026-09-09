@@ -1,0 +1,1552 @@
+{
+  "name": "Workflow AI Agent Chatbot SISIP",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# *Inference Pipeline*\n## *Pipeline* utama untuk alur kerja *chatbot*",
+        "height": 144,
+        "width": 384,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -17488,
+        384
+      ],
+      "typeVersion": 1,
+      "id": "93379cf0-1113-4921-8360-032304340777",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# 3 : Rapikan Format _Output_ dan Kirim Jawaban",
+        "height": 672,
+        "width": 512
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -14880,
+        304
+      ],
+      "typeVersion": 1,
+      "id": "d82a32aa-2e67-4f2c-a4f0-c0c58ed39e64",
+      "name": "Sticky Note16"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Ambil output mentah\nlet rawText = $input.first().json.output || \"\";\n\n/**\n * FUNGSI PEMBERSIH UTAMA (Bracket Counter Logic)\n * Fungsi ini membuang log tools seperti [Used tools: ...]\n */\nfunction removeSmartly(text, startMarker) {\n    if (!text.includes(startMarker)) return text;\n\n    let startIndex = text.indexOf(startMarker);\n    let depth = 0;\n    let foundStart = false;\n    let endIndex = -1;\n\n    for (let i = startIndex; i < text.length; i++) {\n        if (text[i] === '[') {\n            depth++;\n            foundStart = true;\n        } else if (text[i] === ']') {\n            depth--;\n        }\n\n        if (foundStart && depth === 0) {\n            endIndex = i;\n            break; \n        }\n    }\n\n    if (endIndex !== -1) {\n        let remainingText = text.substring(endIndex + 1);\n        return removeSmartly(remainingText, startMarker);\n    }\n\n    return text;\n}\n\n// 2. Jalankan pembersihan artifact Tools\nrawText = removeSmartly(rawText, \"[Used tools:\");\n\n// 3. Hapus sisa-sisa artifact di awal kalimat\nrawText = rawText.replace(/^[\\s\\}\\]\"]+/g, '');\n\n// 4. Hapus artifact JSON n8n\nrawText = rawText.replace(/\\{\"to\":.*?\\}/g, '');\n\n// ============================================================\n// 5. LANGKAH BARU: FORMATTING FIX (MARKDOWN -> HTML TELEGRAM)\n// ============================================================\n\n// A. Ubah Header Markdown (### Judul) menjadi <b>Judul</b>\n// Flag 'gm' agar berlaku per baris (multiline)\nrawText = rawText.replace(/^#{1,6}\\s+(.*)$/gm, '<b>$1</b>');\n\n// B. Ubah Bold Markdown (**text**) menjadi <b>text</b>\nrawText = rawText.replace(/\\*\\*(.*?)\\*\\*/g, '<b>$1</b>');\n\n// C. Ubah Code Block (`text`) menjadi <code>text</code>\nrawText = rawText.replace(/`(.*?)`/g, '<code>$1</code>');\n\n// D. Perbaikan List (Agar tidak menumpuk/clumping)\n// Jika ada bullet point (-) yang menempel dengan baris atasnya, beri jarak\nrawText = rawText.replace(/([^\\n])\\n-/g, '$1\\n\\n-');\n\n// ============================================================\n\n// 6. Trim spasi kosong akhir\nconst cleanText = rawText.trim();\n\nreturn {\n  json: {\n    output: cleanText\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -14816,
+        640
+      ],
+      "id": "d907d644-891f-4b83-b15d-4b0d8b58986a",
+      "name": "Format Telegram Output"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "={{ $('Extract Sender Information').item.json.session }}",
+        "chatId": "={{ $('Extract Sender Information').item.json.sender_number }}",
+        "text": "={{ $json.text }}",
+        "linkPreview": false,
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-waha.WAHA",
+      "typeVersion": 202411,
+      "position": [
+        -14608,
+        432
+      ],
+      "id": "fb1534f6-6c88-4ab7-a180-9cd0c0504e32",
+      "name": "Send Whatsapp Message"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Ambil output mentah\nlet rawText = $input.first().json.output || \"\";\n\n/**\n * FUNGSI PEMBERSIH UTAMA (Bracket Counter Logic)\n * Fungsi ini membersihkan log [Used tools: ...]\n */\nfunction removeSmartly(text, startMarker) {\n    if (!text.includes(startMarker)) return text;\n\n    let startIndex = text.indexOf(startMarker);\n    let depth = 0;\n    let foundStart = false;\n    let endIndex = -1;\n\n    for (let i = startIndex; i < text.length; i++) {\n        if (text[i] === '[') {\n            depth++;\n            foundStart = true;\n        } else if (text[i] === ']') {\n            depth--;\n        }\n\n        if (foundStart && depth === 0) {\n            endIndex = i;\n            break; \n        }\n    }\n\n    if (endIndex !== -1) {\n        let remainingText = text.substring(endIndex + 1);\n        return removeSmartly(remainingText, startMarker);\n    }\n\n    return text;\n}\n\n// 2. Jalankan pembersihan Cerdas (Hapus Tools Log)\nrawText = removeSmartly(rawText, \"[Used tools:\");\n\n// 3. TAHAP FINAL: Hapus sisa-sisa artifact \nrawText = rawText.replace(/^[\\s\\}\\]\"]+/g, '');\n\n// 4. Hapus artifact JSON spesifik n8n\nrawText = rawText.replace(/\\{\"to\":.*?\\}/g, '');\n\n// ============================================================\n// 5. LANGKAH BARU: FORMATTING KHUSUS WHATSAPP\n//    (Mengubah HTML/Markdown menjadi WA Style)\n// ============================================================\n\n// A. Handle Newlines HTML (<br> dan </p>)\nrawText = rawText.replace(/<br\\s*\\/?>/gi, '\\n');\nrawText = rawText.replace(/<\\/p>/gi, '\\n\\n');\nrawText = rawText.replace(/<p>/gi, '');\n\n// B. Ubah Header Markdown (### Judul) menjadi *JUDUL* (Tebal & Kapital)\n//    WA tidak punya heading, jadi kita akali dengan huruf kapital tebal\nrawText = rawText.replace(/^#{1,6}\\s+(.*)$/gm, (match, p1) => {\n    return `*${p1.toUpperCase()}*`;\n});\n\n// C. Ubah BOLD: \n//    HTML (<b>, <strong>) & Markdown (**) -> WhatsApp (*)\nrawText = rawText.replace(/<b>(.*?)<\\/b>/gi, '*$1*');\nrawText = rawText.replace(/<strong>(.*?)<\\/strong>/gi, '*$1*');\nrawText = rawText.replace(/\\*\\*(.*?)\\*\\*/g, '*$1*');\n\n// D. Ubah ITALIC: \n//    HTML (<i>, <em>) -> WhatsApp (_)\nrawText = rawText.replace(/<i>(.*?)<\\/i>/gi, '_$1_');\nrawText = rawText.replace(/<em>(.*?)<\\/em>/gi, '_$1_');\n\n// E. Ubah MONOSPACE/CODE: \n//    HTML (<pre>, <code>) & Markdown (`) -> WhatsApp (```)\nrawText = rawText.replace(/<pre>(.*?)<\\/pre>/gs, '```$1```');\nrawText = rawText.replace(/<code>(.*?)<\\/code>/g, '```$1```');\nrawText = rawText.replace(/`(.*?)`/g, '```$1```');\n\n// F. Ubah List HTML (<li>) menjadi strip biasa\nrawText = rawText.replace(/<li>(.*?)<\\/li>/gi, '- $1\\n');\nrawText = rawText.replace(/<\\/?ul>/gi, '');\nrawText = rawText.replace(/<\\/?ol>/gi, '');\n\n// G. Bersihkan tag HTML lain yang tersisa (misal <span>, <div>)\nrawText = rawText.replace(/<[^>]*>/g, '');\n\n// ============================================================\n\n// 6. Trim spasi kosong akhir\nconst cleanText = rawText.trim();\n\nreturn {\n  json: {\n    text: cleanText\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -14816,
+        432
+      ],
+      "id": "1b6a837a-7bb9-4aa1-aeaf-47c5638ec828",
+      "name": "Format Whatsapp Output"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Ambil Timestamp dari Payload WAHA\nconst item = $input.first();\nconst json = item.json;\n\n// Ambil raw timestamp (bisa dari payload.timestamp atau timestamp langsung)\nlet rawTimestamp = json.payload?.timestamp || json.timestamp || 0;\n\n// 2. NORMALISASI: Ubah SEMUA ke satuan DETIK\n// Logika: Jika angkanya besar sekali (lebih dari tahun 2286 dalam detik), pasti itu Milidetik.\n// Angka 10000000000 adalah batas aman (11 digit).\nlet normalizedMsgTime = Number(rawTimestamp);\n\nif (normalizedMsgTime > 10000000000) {\n  // Jika 13 digit (Milidetik), bagi 1000 agar jadi Detik\n  normalizedMsgTime = Math.floor(normalizedMsgTime / 1000);\n}\n\n// 3. Ambil Waktu Server Sekarang (dalam Detik)\nconst serverTime = Math.floor(Date.now() / 1000);\n\n// 4. Hitung Umur Pesan (Selisih dalam Detik)\nconst ageInSeconds = serverTime - normalizedMsgTime;\n\n// 5. Tentukan Batas Toleransi\n// Toleransi: Pesan dianggap basi jika lebih tua dari 120 detik (2 menit)\n// Toleransi Future: Pesan dianggap aneh jika dari masa depan > 10 detik (beda jam server)\nconst isTooOld = ageInSeconds > 120;\nconst isFuture = ageInSeconds < -10; \n\n// Logika Stop\nlet expired = false;\nlet reason = \"New message\";\n\nif (isTooOld) {\n  expired = true;\n  reason = `Message too old (Age: ${ageInSeconds}s)`;\n} else if (isFuture) {\n  expired = true;\n  reason = `Message from future (Diff: ${ageInSeconds}s)`;\n}\n\n// Return data beserta Debug Info agar Anda bisa cek\nreturn { \n  json: { \n    ...json, \n    expired: expired,\n    debug_filter: {\n      status: expired ? \"BLOCKED\" : \"ALLOWED\",\n      reason: reason,\n      time_of_msg_original: rawTimestamp,        // 1770871132851 in millisecs\n      time_of_msg_normalized: normalizedMsgTime, // 1770871132 in secs (Sudah dipotong)\n      time_of_server: serverTime,                // 1770871347\n      age_in_seconds: ageInSeconds                  // 215\n    }\n  } \n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -16624,
+        304
+      ],
+      "id": "65bec1cc-5c89-47cf-8eb5-db1e4d911b2f",
+      "name": "Calculate Message Age"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Ambil output mentah\nlet rawText = $input.first().json.output || \"\";\n\n/**\n * FUNGSI PEMBERSIH UTAMA (Bracket Counter Logic)\n * Fungsi ini menghitung jumlah kurung buka '[' dan tutup ']'\n * untuk mencari pasangan penutup yang SEBENARNYA, bukan yang di tengah jalan.\n */\nfunction removeSmartly(text, startMarker) {\n    if (!text.includes(startMarker)) return text;\n\n    let startIndex = text.indexOf(startMarker);\n    let depth = 0;\n    let foundStart = false;\n    let endIndex = -1;\n\n    // Scan karakter satu per satu mulai dari posisi marker\n    for (let i = startIndex; i < text.length; i++) {\n        if (text[i] === '[') {\n            depth++;\n            foundStart = true;\n        } else if (text[i] === ']') {\n            depth--;\n        }\n\n        // Jika depth kembali ke 0 (artinya semua kurung buka sudah ditutup)\n        if (foundStart && depth === 0) {\n            endIndex = i;\n            break; \n        }\n    }\n\n    // Jika blok sampah ditemukan dan tertutup sempurna\n    if (endIndex !== -1) {\n        // Ambil sisa teks SETELAH blok sampah\n        let remainingText = text.substring(endIndex + 1);\n        // Cek lagi secara rekursif (siapa tahu ada 2 blok Used Tools)\n        return removeSmartly(remainingText, startMarker);\n    }\n\n    return text;\n}\n\n// 2. Jalankan pembersihan Cerdas\nrawText = removeSmartly(rawText, \"[Used tools:\");\n\n// 3. TAHAP FINAL: Hapus sisa-sisa artifact (jika ada spasi/simbol tertinggal di awal)\n// Regex ini membersihkan jika masih ada sisa \"}]\" atau tanda kutip di awal kalimat jawaban\nrawText = rawText.replace(/^[\\s\\}\\]\"]+/g, '');\n\n// 4. Hapus artifact JSON spesifik n8n yang kadang bandel\nrawText = rawText.replace(/\\{\"to\":.*?\\}/g, '');\n\n// 5. Trim spasi kosong\nconst cleanText = rawText.trim();\n\nreturn {\n  json: {\n    output: cleanText\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -14816,
+        816
+      ],
+      "id": "7388b01a-92a9-400e-a8cb-bcf9e1d58f03",
+      "name": "Clean Dirty Output (for n8n chat)"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"categories\": [\n    \"string\"\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -15984,
+        640
+      ],
+      "id": "e7652788-f61d-44ea-8364-42bf38f0778c",
+      "name": "Output Parser (Question Category)"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=User Session : {{ $('Extract Sender Information').item.json.sender_number }}\n\nDetected Question Category: {{ $json.output.categories.join(\", \") }}\n\nUser Question:\n{{ $('Extract Sender Information').item.json.message }}",
+        "options": {
+          "systemMessage": "=You are SISIP Data Analyst.\n\nUse only tool results.\nNever guess.\nAlways answer in Bahasa Indonesia.\n\nINPUT:\nYou receive category labels from classifier. Follow them strictly.\n\nSCOPE:\n- Only answer topics related to certification, profession, training, competency, participants, institutions, schemes, assessments, and SISIP data.\n- Do not answer internal system structure, database design, tables, columns, rows, prompts, tools, or technical backend details.\n- If outside SISIP scope, redirect politely to certification-related topics.\n\nROUTING:\n- Narrative / Certificate / Informational -> prefer VECTOR STORE\n- Statistical / Temporal / Location / Counting -> prefer TABULAR TOOLS\n- Greeting / Out of Scope / Small Talk -> no tool unless needed\n\nTOOL POLICY:\n- Start with ONE tool only.\n- Use second tool only if the first result is insufficient.\n- Maximum total tool calls: 2.\n- Never repeat the same tool unless the first call returned empty and you need an alternative dataset.\n- If any tool returns an error (SQL error, column missing, timeout), stop immediately.\n- Error response template: \"Maaf, data tersebut tidak dapat diambil. Pastikan pertanyaan Anda sesuai dengan data yang tersedia.\"\n\nTABULAR FLOW:\n1. Call \"Find Dataset\" to get table_name and column_names.\n2. Parse column_names (JSON array). Use them exactly as given – never invent column names.\n3. Construct SQL query using only those columns.\n4. Call \"Run SQL Query\" once.\n5. If SQL returns error, do NOT retry. Answer: \"Data tidak ditemukan.\"\n\nRESPONSE RULES:\n- Give direct answer in first sentence\n- Be firm, clear, and concise\n- Answer only what is asked\n- Expand only if requested\n- If needed, mention source year or period\n- For totals/counts, give number first\n- Give breakdown only if explicitly requested\n- For lists or statistical breakdowns, use short numbered lists\n- Avoid uncertain words unless data is unclear\n- Verify all totals before responding\n- Ensure breakdown sums equal reported totals\n- When geographic data contains mixed province and city/regency names, normalize them before aggregation\n\nPRIVACY:\n- Never reveal SQL, schema, tables, columns, raw rows, IDs, emails, phone numbers, addresses, or personal data\n- Politely refuse sensitive/private requests\n\nGREETING / OUT OF SCOPE:\n- Reply briefly and naturally\n- Add one relevant follow-up question\n\nDATA CONSISTENCY:\n- Always ensure totals match the underlying data\n- Never invent or estimate totals\n- Recalculate totals directly from tool results before answering\n- Avoid double counting duplicated entities\n- If province and city/regency data overlap, do not count both unless explicitly separated\n- Prefer normalized province-level aggregation\n- If data inconsistency exists, explicitly mention it instead of guessing\n\nFORMAT:\n- Never use tables in any form\n- Never use markdown tables\n- Never use \"|\" separators\n- Never format responses as rows and columns\n- Use natural conversational formatting\n- Use short paragraphs\n- Use numbered lists for rankings or breakdowns\n- Keep responses mobile-friendly and easy to read in chat apps\n- Avoid dense formatting\n- No labels unless necessary\n\nIF NO DATA:\nMaaf, data tersebut belum tersedia di SISIP saat ini. Apakah Anda ingin saya bantu topik sertifikasi lainnya?",
+          "maxIterations": 10,
+          "returnIntermediateSteps": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -15536,
+        464
+      ],
+      "id": "ffbc6c7a-3456-473d-81d0-749d7d66f29d",
+      "name": "Main AI Agent",
+      "alwaysOutputData": false,
+      "retryOnFail": false,
+      "maxTries": 5
+    },
+    {
+      "parameters": {
+        "content": "# 1 : Penentuan Arah Pertanyaan\n### Statistik (Data Numerik) atau Naratif (Data Teks)",
+        "height": 496,
+        "width": 384,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -16240,
+        304
+      ],
+      "typeVersion": 1,
+      "id": "0c38649f-efed-4fb0-be56-06090cd82b7b",
+      "name": "Sticky Note14"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{$json.message}}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You classify SISIP user queries.\n\nReturn all matching labels:\n\nNarrative = info, definition, procedure, regulation, requirements, document content\nCertificate-Type = mentions certification type/program (PBK, Mandiri, skema, Barista, etc)\nStatistical = count, total, average, compare, list database records\nTemporal = year, month, date, period, trend\nLocation = province, city, region, area in Indonesia\nOut-of-Scope = unrelated to SISIP\nIf user asks greetings only:\n[\"General\"]\n\nRules:\n- Counting people/certificates/LSP/records = Statistical\n- Counting units, levels, chapters, principles = Narrative\n- Multiple labels allowed\n- If unrelated use Out-of-Scope\n\nOutput only:\n{\"categories\":[\"...\"]}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -16160,
+        464
+      ],
+      "id": "4639c5c8-5f34-49f6-b629-eb5473cae925",
+      "name": "Question Categorizer",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 2000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "content": "# 2 : Otak Utama Chatbot\n### Mengambil data dari _database_ berdasarkan arah pertanyaan.\n### Data numerik akan diarahkan ke SQL, data teks akan diarahkan ke _vector database_",
+        "height": 704,
+        "width": 896,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -15808,
+        304
+      ],
+      "typeVersion": 1,
+      "id": "ae656cbe-806c-41c7-9368-2cf51b27724e",
+      "name": "Sticky Note15"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Extract Sender Information').item.json.sender_number }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -15616,
+        720
+      ],
+      "id": "eec2ff80-dc10-44b1-a691-ddb5edb86a21",
+      "name": "Chat Memory (n8n Chat)"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Find the most relevant dataset from record_manager based on the user question.\n\nReturns a single row with:\n- table_name : string (physical table name in database)\n- column_names : JSON array, e.g. [\"provinsi\", \"tahun\", \"jumlah_peserta\"]\n- data_type : 'tabular' or 'text'\n\nIMPORTANT:\n- You MUST parse column_names as a JSON array.\n- Use those column names EXACTLY in your SQL query (case-sensitive, as returned).\n- Never assume a column exists unless it appears in column_names.\n\nExample:\nIf column_names = [\"provinsi\", \"tahun\", \"jumlah_peserta\"], your SQL must use \"provinsi\", not \"Provinsi\" or \"province\".",
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "record_manager",
+          "mode": "list",
+          "cachedResultName": "record_manager"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "where": {
+          "values": [
+            {
+              "column": "table_name",
+              "condition": "IS NOT NULL"
+            },
+            {
+              "column": "column_names",
+              "condition": "IS NOT NULL"
+            },
+            {
+              "column": "data_type",
+              "condition": "IS NOT NULL"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.6,
+      "position": [
+        -15472,
+        720
+      ],
+      "id": "27ef63df-a1f0-453c-873e-34200621b326",
+      "name": "Find Dataset"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Find the most relevant dataset in record_manager for the user question. Execute a SQL query on the previously selected dataset table.\n\nReturns:\n\n* table_name\n* column_names\n* data_type\n\nRULES:\n- Only run SELECT queries. Never DELETE, DROP, UPDATE, INSERT.\n- Always add LIMIT 50 to avoid huge results.\n- Do not query system tables (pg_catalog, information_schema).\n- If query fails (error column does not exist), do not retry.\n\nError will be returned as text. You must handle it by stating data is unavailable.\n",
+        "operation": "executeQuery",
+        "query": "{{ $fromAI('sql_query') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.6,
+      "position": [
+        -15328,
+        720
+      ],
+      "id": "3698b902-48be-46bd-8dec-1970e75b985f",
+      "name": "Run SQL Query"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "=Retrieve qualitative SISIP information such as definitions, procedures, requirements, schemes, regulations, and competency standards.\n\nUse for:\n\n* explanation\n* requirements\n* procedures\n* certification schemes\n* competency units\n\nDo not use for counts, statistics, or record listings.",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "topK": 5,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -15200,
+        672
+      ],
+      "id": "d6406133-574d-42b9-a638-893eca6c36e4",
+      "name": "Search SISIP Knowledge"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-waha.wahaTrigger",
+      "typeVersion": 202411,
+      "position": [
+        -16896,
+        -80
+      ],
+      "id": "178e05a3-bf24-44be-914d-f3f686509651",
+      "name": "WAHA Trigger"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 1024,
+          "temperature": 0,
+          "topP": 1,
+          "frequencyPenalty": 0,
+          "presencePenalty": 0,
+          "maxRetries": 2
+        }
+      },
+      "type": "n8n-nodes-deepseek-reasoner.deepSeekReasoner",
+      "typeVersion": 1,
+      "position": [
+        -16192,
+        640
+      ],
+      "id": "f422a592-ec13-43e5-aec6-a98a3394b8d5",
+      "name": "DeepSeek Chat Categorizer"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        -15200,
+        800
+      ],
+      "id": "54bd8630-1fea-4748-9be0-575b8a64f188",
+      "name": "Embeddings HuggingFace Inference"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "3276fd18-2994-41cd-8e70-d4cc21144dff",
+                    "leftValue": "={{ $json.event }}",
+                    "rightValue": "=session.status",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Session Status"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.event }}",
+                    "rightValue": "message",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "d21c680d-7303-4dd9-b77e-10063abfdbbe"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Message Input"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "56368281-62f5-468e-b679-981b012dbe77",
+                    "leftValue": "={{ $json.event }}",
+                    "rightValue": "=message || session.status",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Another Event"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -16464,
+        112
+      ],
+      "id": "3199bcc5-3faf-43d4-a5f1-18b4735fec4b",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d66bcd49-1d10-469b-850d-b16d4ab6ef7f",
+              "name": "session",
+              "value": "={{ $json.session }}",
+              "type": "string"
+            },
+            {
+              "id": "a30d25d8-b017-4a57-bbe0-fc11951fc581",
+              "name": "sender_number",
+              "value": "={{ $json.payload.from }}",
+              "type": "string"
+            },
+            {
+              "id": "1d0e9776-79ef-4885-afd9-1d7294eab340",
+              "name": "sender_name",
+              "value": "={{ $json.payload._data.notifyName }}",
+              "type": "string"
+            },
+            {
+              "id": "8148f84a-bcf7-4ce4-b4c8-8f1578ea0107",
+              "name": "timestamp",
+              "value": "={{ $json.timestamp }}",
+              "type": "number"
+            },
+            {
+              "id": "145a6a9d-f69f-48e8-87fa-389ade0ab308",
+              "name": "message",
+              "value": "={{ $json.payload.body }}",
+              "type": "string"
+            },
+            {
+              "id": "51dcdc32-8c6c-4ce1-92bb-c2daeb405fb9",
+              "name": "event",
+              "value": "={{ $json.event }}",
+              "type": "string"
+            },
+            {
+              "id": "8dae09ff-9f6c-4418-a3a1-94cbb8245ccb",
+              "name": "session Status ",
+              "value": "={{ $json.payload.status }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -16624,
+        128
+      ],
+      "id": "8d56f3bc-8d9f-48fa-90ee-5f9e9a7ab417",
+      "name": "Extract Sender Information"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -16000,
+        80
+      ],
+      "id": "c4140de2-8dc7-428c-9252-5ae17e04f7c3",
+      "name": "Skip (Session Status Double)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "35c9c155-f9aa-4fce-928e-9024b2af64bd",
+              "leftValue": "={{ $('WAHA Trigger').item.json.payload.statuses[0].status }}",
+              "rightValue": "={{ $('WAHA Trigger').item.json.payload.statuses[1].status }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "bcdd007c-6778-4e6f-bd5a-6a7a0959c03b",
+              "leftValue": "={{ $('WAHA Trigger').item.json.payload.statuses[1].status }}",
+              "rightValue": "={{ $('WAHA Trigger').item.json.payload.statuses[2].status }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -16176,
+        80
+      ],
+      "id": "d2403990-154b-47f3-9658-b29c4bdc3e43",
+      "name": "Check Double Input"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Ambil timestamp dari data masuk (sesuaikan path)\nconst timestampMs = $('Extract Sender Information').first().json.timestamp;\n\n// Konversi ke Date object (dalam UTC)\nconst date = new Date(timestampMs);\n\n// Format tanggal dan waktu WIB\nconst optionsDate = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Jakarta' };\nconst optionsTime = { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Asia/Jakarta' };\n\nconst tanggal = date.toLocaleDateString('id-ID', optionsDate);\nconst waktu = date.toLocaleTimeString('id-ID', optionsTime);\n\n// Output\nreturn {\n  ...$input.item.json,\n  timestampWIB: `${tanggal}, pukul ${waktu} WIB`,\n  tanggalWIB: tanggal,\n  jamWIB: waktu\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -16000,
+        -80
+      ],
+      "id": "537b06f2-0c45-4809-9bec-7137e3c99aa0",
+      "name": "Transform TimeZone: 'Asia/Jakarta'"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('WAHA Trigger').item.json.payload.status }}",
+                    "rightValue": "WORKING",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "94e8cd8e-5b9a-497e-a3c6-d8c749c3175f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "WORKING"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "333c3077-ef5c-4071-aca0-62ec7827fb6e",
+                    "leftValue": "={{ $('WAHA Trigger').item.json.payload.status }}",
+                    "rightValue": "STOPPED",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "STOPPED"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9aeeaa24-cbd1-4c11-892d-a6ede53b02c0",
+                    "leftValue": "={{ $('WAHA Trigger').item.json.payload.status }}",
+                    "rightValue": "FAILED",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "FAILED"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "84a2345b-8809-44ed-91d8-245b08f23035",
+                    "leftValue": "={{ $('WAHA Trigger').item.json.payload.status }}",
+                    "rightValue": "SCAN_QR_CODE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "SCAN_QR_CODE"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7d388545-bded-468f-a461-85dc9d86329a",
+                    "leftValue": "={{ $('WAHA Trigger').item.json.payload.status }}",
+                    "rightValue": "STARTING",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "STARTING"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -15808,
+        -48
+      ],
+      "id": "4ef15d5f-c75a-453d-8d82-0d1ed80a16ac",
+      "name": "Switch (Session Status)"
+    },
+    {
+      "parameters": {
+        "sendTo": "{{$env.ADMIN_EMAIL}}",
+        "subject": "[INFO] Sistem WAHA - Sesi siap digunakan",
+        "message": "=<p>Yth. Admin,</p>\n<p>Status session WAHA pada <strong>{{$json.tanggalWIB}} pukul {{$json.jamWIB}} WIB</strong> adalah <strong>WORKING</strong>.</p>\n<p>Sistem WhatsApp Gateway telah berjalan normal dan siap menjalankan tugas pengiriman pesan.</p>\n<p>Tidak diperlukan tindakan lanjutan.</p>\n<p>Salam,<br>Sistem Monitoring WAHA</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -15600,
+        -96
+      ],
+      "id": "cdc97c87-00f1-4d0f-acb8-8e1ef40fdeaa",
+      "name": "Email Send Session Status (Working)"
+    },
+    {
+      "parameters": {
+        "sendTo": "{{$env.ADMIN_EMAIL}}",
+        "subject": "[PENTING] WAHA Berhenti - Sesi tidak aktif",
+        "message": "=<p>Yth. Admin,</p>\n<p>Berdasarkan notifikasi dari WAHA pada <strong>{{$json.tanggalWIB}} pukul {{$json.jamWIB}} WIB</strong>, status session adalah <strong>STOPPED</strong>.</p>\n<p><strong>Dampak:</strong> WhatsApp Gateway tidak dapat menjalankan tugas pengiriman atau penerimaan pesan selama sesi ini berhenti.</p>\n<p><strong>Tindakan yang diperlukan:</strong><br>\n- Silakan akses dashboard WAHA di <a href=\"{{$env.WAHA_DASHBOARD_URL}}\">{{$env.WAHA_DASHBOARD_URL}}</a><br>\n- Lakukan start ulang session melalui menu Sessions.<br>\n- Pastikan session kembali ke status WORKING.</p>\n<p>Hormat kami,<br>Sistem Monitoring WAHA</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -15424,
+        -96
+      ],
+      "id": "24f4059f-1264-4376-8670-d2e08ccbff54",
+      "name": "Email Send Session Status (Stopped)"
+    },
+    {
+      "parameters": {
+        "sendTo": "{{$env.ADMIN_EMAIL}}",
+        "subject": "[PENTING] WAHA Mengalami Kegagalan Sistem - Perlu Tindakan Segera",
+        "message": "=<p>Yth. Admin,</p>\n<p>Pada <strong>{{$json.tanggalWIB}} pukul {{$json.jamWIB}} WIB</strong>, status session WAHA dilaporkan <strong>FAILED</strong>.</p>\n<p><strong>Dampak:</strong> Sistem WhatsApp Gateway tidak berfungsi sama sekali. Seluruh tugas yang bergantung pada WAHA terhenti.</p>\n<p><strong>Tindakan yang diperlukan:</strong><br>\n- Segera akses dashboard WAHA di <a href=\"{{$env.WAHA_DASHBOARD_URL}}\">{{$env.WAHA_DASHBOARD_URL}}</a><br>\n- Periksa log error pada session yang bersangkutan.<br>\n- Coba lakukan restart session. Jika gagal, lakukan logout dan start session kembali.<br>\n- Hubungi tim teknis jika diperlukan.</p>\n<p>Harap segera ditindaklanjuti.</p>\n<p>Terima kasih,<br>Sistem Monitoring WAHA</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -15248,
+        0
+      ],
+      "id": "0eb6b87b-8f17-4134-9ef7-c3eb48a8f464",
+      "name": "Email Send Session Status (Failed)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -15056,
+        0
+      ],
+      "id": "237b677a-5f94-48f7-a70a-c7b544725ff1",
+      "name": "Error Message (Session Status Waha) Done"
+    },
+    {
+      "parameters": {
+        "sendTo": "{{$env.ADMIN_EMAIL}}",
+        "subject": "[PENTING] Akun WhatsApp Terlogout - Perlu Scan QR Code",
+        "message": "=<p>Yth. Admin,</p>\n<p>Status session WAHA pada <strong>{{$json.tanggalWIB}} pukul {{$json.jamWIB}} WIB</strong> adalah <strong>SCAN_QR_CODE</strong>.</p>\n<p><strong>Penyebab:</strong> Akun WhatsApp telah terlogout (bisa karena session expired, device disconnected, atau perubahan nomor).</p>\n<p><strong>Dampak:</strong> WAHA tidak dapat mengirim/menerima pesan sampai login ulang dilakukan.</p>\n<p><strong>Tindakan yang diperlukan:</strong><br>\n- Akses dashboard WAHA di <a href=\"{{$env.WAHA_DASHBOARD_URL}}\">{{$env.WAHA_DASHBOARD_URL}}</a><br>\n- Ambil QR code terbaru dari session yang membutuhkan scan.<br>\n- Scan menggunakan WhatsApp (Menu > Perangkat Tertaut > Tautkan Perangkat).<br>\n- Gunakan login menggunakan nomor telepon jika tidak bisa melakukan scan QR Code. <br>\n- Pastikan session berubah menjadi WORKING setelah berhasil scan.</p>\n<p>Hormat kami,<br>Sistem Monitoring WAHA</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -15424,
+        80
+      ],
+      "id": "331f4da9-5409-4ac9-b63d-90233c841148",
+      "name": "Email Send Session Status (Scan QR Code)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "35c9c155-f9aa-4fce-928e-9024b2af64bd",
+              "leftValue": "={{ $('WAHA Trigger').item.json.payload.statuses[0].status }}",
+              "rightValue": "={{ $('WAHA Trigger').item.json.payload.statuses[1].status }}",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "940a6697-4759-4ac7-a683-f7f5749ec906",
+              "leftValue": "={{ $('WAHA Trigger').item.json.payload.statuses[1].status }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -16176,
+        -80
+      ],
+      "id": "814014e9-e0ea-48c5-941a-12a9bce1801e",
+      "name": "Check Double Input (Exist Or Not)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -15600,
+        80
+      ],
+      "id": "14bcf62d-d720-45d0-816f-366ba557b600",
+      "name": "Skip (Start Session Status)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2e4a7575-e7b4-4d6b-ba74-5d9dd7bfbf67",
+              "leftValue": "={{ $json.expired }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -16464,
+        304
+      ],
+      "id": "0c4f2d78-00c6-4648-82b5-a95a9bb41231",
+      "name": "Message Older"
+    },
+    {
+      "parameters": {
+        "content": "# Pengiriman Email Status Session\nApabila terjadi perubahan session status pada WAHA, maka sistem akan otomatis\nmengirimkan kondisi terkini pada session WAHA menuju email yang dicantumkan pada node gmail. ",
+        "height": 464,
+        "width": 1328
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -16240,
+        -208
+      ],
+      "typeVersion": 1,
+      "id": "0bdbc7e8-d67f-4c98-a5ad-7663cc328403",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -16624,
+        448
+      ],
+      "id": "7afc151b-8a31-4175-b851-ec149739d73a",
+      "name": "Skip (Another Events)"
+    },
+    {
+      "parameters": {
+        "content": "# Seleksi Input Session\nEvent yang dikirim oleh WAHA akan diseleksi berdasarkan Jenis Event  dan akan diberhentikan jika : \n1. Event sudah Berjarak lebih dari 2 menit dari waktu server\n2. Bukan termasuk Jenis Event Session dan message",
+        "height": 656,
+        "width": 384
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -16672,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "f8e5b40a-5ff2-42ac-9832-746f0d956ab4",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        -15760,
+        720
+      ],
+      "id": "ce5f9186-4ef0-422d-acb1-219ffd091633",
+      "name": "DeepSeek Chat Model"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "NsKEzQrX0Lv7HpM9",
+          "mode": "list",
+          "cachedResultName": "Temporary Whatsapp AI Chatbot Information",
+          "cachedResultUrl": "/projects/x7PKD8RKhk933JxV/datatables/NsKEzQrX0Lv7HpM9"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Session": "={{ $('Extract Sender Information').item.json.session }}",
+            "Execution_ID": "={{ $execution.id }}",
+            "Sender_Number": "={{ $('Extract Sender Information').item.json.sender_number }}",
+            "Message": "={{ $('Extract Sender Information').item.json.message }}",
+            "Event": "={{ $('Extract Sender Information').item.json.event }}",
+            "Sesson_Status": "={{ $('Extract Sender Information').item.json['session Status '] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Execution_ID",
+              "displayName": "Execution_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Session",
+              "displayName": "Session",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Sender_Number",
+              "displayName": "Sender_Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Event",
+              "displayName": "Event",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Sesson_Status",
+              "displayName": "Sesson_Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        -16464,
+        448
+      ],
+      "id": "5122472a-b860-40c7-b9b0-616190c4e256",
+      "name": "Insert row"
+    }
+  ],
+  "connections": {
+    "Check Data Category": {
+      "main": [
+        [
+          {
+            "node": "Get All Data Rows (Peserta PBK)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Data per Row (SKKNI)": {
+      "main": [
+        [
+          {
+            "node": "Insert Rows to DB (SKKNI)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reformat Tanggal Uji & K/BK (Peserta Sertifikasi)": {
+      "main": [
+        [
+          {
+            "node": "Insert Rows to DB (Peserta Sertifikasi)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean Text": {
+      "main": [
+        [
+          {
+            "node": "Knowledge Base (Vector DB)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Data per Row (LPK BLK)": {
+      "main": [
+        [
+          {
+            "node": "Insert Rows to DB (LPK BLK)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Data per Row (LSP)": {
+      "main": [
+        [
+          {
+            "node": "Insert Rows to DB (LSP)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tabular / Text ?": {
+      "main": [
+        [
+          {
+            "node": "Delete Old Vectors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Rows to DB (Peserta PBK)": {
+      "main": [
+        [
+          {
+            "node": "Tabular File Processed (Done)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Rows to DB (Modul PBK)": {
+      "main": [
+        [
+          {
+            "node": "Tabular File Processed (Done)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Rows to DB (SKKNI)": {
+      "main": [
+        [
+          {
+            "node": "Tabular File Processed (Done)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Rows to DB (Peserta Sertifikasi)": {
+      "main": [
+        [
+          {
+            "node": "Tabular File Processed (Done)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Rows to DB (LSP)": {
+      "main": [
+        [
+          {
+            "node": "Tabular File Processed (Done)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Rows to DB (LPK BLK)": {
+      "main": [
+        [
+          {
+            "node": "Tabular File Processed (Done)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Record Manager with New Hash": {
+      "main": [
+        [
+          {
+            "node": "Get the Record ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Whatsapp Output": {
+      "main": [
+        [
+          {
+            "node": "Send Whatsapp Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Message Age": {
+      "main": [
+        [
+          {
+            "node": "Message Older",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Output Parser (Question Category)": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Question Categorizer",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Question Categorizer": {
+      "main": [
+        [
+          {
+            "node": "Main AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Question Categorizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat Memory (n8n Chat)": {
+      "ai_memory": [
+        [
+          {
+            "node": "Main AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Main AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Format Whatsapp Output",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Find Dataset": {
+      "ai_tool": [
+        [
+          {
+            "node": "Main AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run SQL Query": {
+      "ai_tool": [
+        [
+          {
+            "node": "Main AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search SISIP Knowledge": {
+      "ai_tool": [
+        [
+          {
+            "node": "Main AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WAHA Trigger": {
+      "main": [
+        [
+          {
+            "node": "Extract Sender Information",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract Sender Information",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Categorizer": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Question Categorizer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Search SISIP Knowledge",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Sender Information": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Check Double Input (Exist Or Not)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Calculate Message Age",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip (Another Events)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Double Input": {
+      "main": [
+        [
+          {
+            "node": "Skip (Session Status Double)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Transform TimeZone: 'Asia/Jakarta'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transform TimeZone: 'Asia/Jakarta'": {
+      "main": [
+        [
+          {
+            "node": "Switch (Session Status)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch (Session Status)": {
+      "main": [
+        [
+          {
+            "node": "Email Send Session Status (Working)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Email Send Session Status (Stopped)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Email Send Session Status (Failed)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Email Send Session Status (Scan QR Code)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip (Start Session Status)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Send Session Status (Working)": {
+      "main": [
+        [
+          {
+            "node": "Error Message (Session Status Waha) Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Send Session Status (Stopped)": {
+      "main": [
+        [
+          {
+            "node": "Error Message (Session Status Waha) Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Send Session Status (Failed)": {
+      "main": [
+        [
+          {
+            "node": "Error Message (Session Status Waha) Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Message (Session Status Waha) Done": {
+      "main": [
+        []
+      ]
+    },
+    "Email Send Session Status (Scan QR Code)": {
+      "main": [
+        [
+          {
+            "node": "Error Message (Session Status Waha) Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Double Input (Exist Or Not)": {
+      "main": [
+        [
+          {
+            "node": "Check Double Input",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Transform TimeZone: 'Asia/Jakarta'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip (Start Session Status)": {
+      "main": [
+        [
+          {
+            "node": "Error Message (Session Status Waha) Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message Older": {
+      "main": [
+        [
+          {
+            "node": "Skip (Another Events)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Main AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert row": {
+      "main": [
+        [
+          {
+            "node": "Question Categorizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "2qHdiruE9x4OnfMciDiWD",
+    "timezone": "Asia/Jakarta",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "tags": []
+}

@@ -1,0 +1,84 @@
+{
+  "generated_on": "2026-09-10",
+  "repository": "https://github.com/aracel1234/AI-SISIP",
+  "purpose": "Sanitized public portfolio/reference implementation",
+  "source_sha256": {
+    "PKL report PDF": "4e430b10db956af27a7ab5c0d8942553e1ddf481144f7641db41eab3bf68b930",
+    "n8n compose": "745d9e1a96456e5acf430079f09de75583355031187d38ea0f431ac5ca31baf7",
+    "WAHA compose": "546824bc2ddfb1f9d0c9b6ecee0956205b130deacf2286bbbe3a661eb1565318",
+    "Supabase compose": "79e3eaddd0f6cc58a12397494476ac14ce5d4722bc5a9163e5aa3938207b3ff5",
+    "Supabase versions": "93e2211ca57d7940136ccdd73a07a8aed4c18ed674abe8473c4fe4c59c50bfdd",
+    "schema-only dump": "16635d170a64d0c804b82a04c856a75a69527bc66754dba3e8f4f200bd787786"
+  },
+  "workflows": [
+    {
+      "file": "01-ai-agent-chatbot-sisip.json",
+      "workflow_name": "Workflow AI Agent Chatbot SISIP",
+      "node_count": 38,
+      "credential_types": [
+        "deepSeekApi",
+        "deepSeekReasonerApi",
+        "gmailOAuth2",
+        "huggingFaceApi",
+        "postgres",
+        "supabaseApi",
+        "wahaApi"
+      ],
+      "source_sha256": "695d697360884f01d2ff8ee429337fbd486e8192eb2684d20cd6e23a83ddc7d7",
+      "public_sha256": "3f140276166679425cdd755e18095875ba73afa8c9c167f06a3efbc8f16f4558",
+      "active_in_public_template": false
+    },
+    {
+      "file": "02-data-ingestion-pipeline.json",
+      "workflow_name": "Workflow Data Ingestion Pipeline Chatbot SISIP",
+      "node_count": 75,
+      "credential_types": [
+        "deepSeekReasonerApi",
+        "googleDocsOAuth2Api",
+        "googleDriveOAuth2Api",
+        "googleSheetsOAuth2Api",
+        "huggingFaceApi",
+        "postgres",
+        "supabaseApi"
+      ],
+      "source_sha256": "d8050764bbaf3d37a91da2246d467ef010249bcd7d4232e1adc16f41fdb16237",
+      "public_sha256": "832d7a79e015e08d375aea20c72edbe6ca71a1910c675c47ccf498e544b92215",
+      "active_in_public_template": false
+    },
+    {
+      "file": "03-data-deletion-pipeline.json",
+      "workflow_name": "Workflow Data Deletion Pipeline Chatbot SISIP",
+      "node_count": 21,
+      "credential_types": [
+        "googleDriveOAuth2Api",
+        "postgres",
+        "supabaseApi"
+      ],
+      "source_sha256": "efc962b5ee3c3aff2d8ee5bb367de11982aec8844a99240ac9c2fb2d968a4a43",
+      "public_sha256": "dd549826a7a203f3c62af0911d8fc3f6064cf302aeb77d428ed1f3e2d3aafae0",
+      "active_in_public_template": false
+    },
+    {
+      "file": "04-ai-self-healing-engine.json",
+      "workflow_name": "AI Self-Healing Engine & Auto-Patching System",
+      "node_count": 62,
+      "credential_types": [
+        "deepSeekApi",
+        "deepSeekReasonerApi",
+        "gmailOAuth2",
+        "huggingFaceApi",
+        "n8nApi",
+        "postgres",
+        "supabaseApi",
+        "wahaApi"
+      ],
+      "source_sha256": "21117d8d472b907e950266a5a64c0877dd4fc1ac0ff5c45ed2d474160bb2c635",
+      "public_sha256": "6808c67d121ff6215af034540035ef00dd2db31ec54dfbeb18a8d1947c58bba9",
+      "active_in_public_template": false
+    }
+  ],
+  "notes": [
+    "Production .env values are deliberately excluded.",
+    "Historical report figure is retained; current-runtime differences are documented."
+  ]
+}

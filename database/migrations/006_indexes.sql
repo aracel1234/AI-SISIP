@@ -1,0 +1,4 @@
+-- No extra non-constraint index on the five core tables was present in the supplied
+-- production schema audit. Primary-key/unique indexes are created by table constraints.
+-- In particular, no HNSW/IVFFlat index was observed on documents.embedding.
+-- See ../optional/enable-hnsw.sql for an optional reference enhancement.

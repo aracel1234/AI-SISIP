@@ -1,0 +1,495 @@
+{
+  "file_count": 98,
+  "files": [
+    {
+      "path": ".env.example",
+      "bytes": 2242,
+      "sha256": "f7968a3dc92476fa1879f88c45822031bbd361315457e0d88eb6ea1de5ee52f0"
+    },
+    {
+      "path": ".github/workflows/gitleaks.yml",
+      "bytes": 247,
+      "sha256": "7cb3c3c67931a23153408f54e81f5f83ae1e7f62d45407661b7785a83244c986"
+    },
+    {
+      "path": ".github/workflows/validate.yml",
+      "bytes": 607,
+      "sha256": "99ead40ad95cc3efe92f77e678fdc3970181bd788613a0f1f0f0a2518df5e226"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 303,
+      "sha256": "4b80638e654445e3a26b377fe9bc34e64d8f3044303c6b800341664e2cc163d6"
+    },
+    {
+      "path": "DISCLAIMER.md",
+      "bytes": 762,
+      "sha256": "25d2e2fc8051066188ad35d4a669b5cbddaac31a1db249b066ef003ef5fce233"
+    },
+    {
+      "path": "Makefile",
+      "bytes": 612,
+      "sha256": "5fad1b7c6a149f4f2134b6723ffd1db5ce2a532df3b93a52976ecc434b4604a5"
+    },
+    {
+      "path": "PUSH_TO_GITHUB.md",
+      "bytes": 888,
+      "sha256": "747ca053aec26c46d837af12cf35b10943d7da3b9f5fdcb7f594815311e09ce9"
+    },
+    {
+      "path": "README.md",
+      "bytes": 5809,
+      "sha256": "bfc97b61fffdd01b3686fc9b0397612dfbb94cd77cb7da7f023ce89e940f4f8f"
+    },
+    {
+      "path": "SECURITY.md",
+      "bytes": 1740,
+      "sha256": "125abe3fab11c39c380965d13669299fa8672ea5d06c47cb13749cd5095e4add"
+    },
+    {
+      "path": "SOURCE_PROVENANCE.json",
+      "bytes": 3183,
+      "sha256": "7dde60a10fd8aa3dd46c38ac4c90f6912403e401e57d2b45f4bd3d88c76754b7"
+    },
+    {
+      "path": "VALIDATION_REPORT.txt",
+      "bytes": 276,
+      "sha256": "6c66b6ff1e30ecbb35b0a4729e4e3e59b45f9a627921be0848f804c59c4580da"
+    },
+    {
+      "path": "database/migrations/001_extensions.sql",
+      "bytes": 212,
+      "sha256": "58ea8d8b1f0c462f2bf8c5903f923eb4b320bd9cdd2796d33ff7a5e6c7c51c92"
+    },
+    {
+      "path": "database/migrations/002_core_tables.sql",
+      "bytes": 1350,
+      "sha256": "cd37dad64e95a9771a26d36ae45fd31095841eb70b8b65c893a3206b6f2172ea"
+    },
+    {
+      "path": "database/migrations/003_rag_functions.sql",
+      "bytes": 660,
+      "sha256": "8e3efc10a26df618e495f81c7200b03ac2ac8af3c1b0a56971f0f1c0b478fb2c"
+    },
+    {
+      "path": "database/migrations/004_rls_and_policies.sql",
+      "bytes": 716,
+      "sha256": "41baa564b728a1be4acce953dc0c76737bdb524a166f861f714196a471015d8f"
+    },
+    {
+      "path": "database/migrations/005_event_trigger.sql",
+      "bytes": 1279,
+      "sha256": "863ea85c9ea6c5cac3bf21f6ec3b2548e193cd2e18b0c33b0efae9840d30baac"
+    },
+    {
+      "path": "database/migrations/006_indexes.sql",
+      "bytes": 325,
+      "sha256": "2cf29bc902496aa182be0d6ca83b1088bb77efff46f0f30a5985ba1f36fc7ede"
+    },
+    {
+      "path": "database/optional/enable-hnsw.sql",
+      "bytes": 326,
+      "sha256": "05aadd459998fce4df53f86fae62ef740317c70a39fe4ddbe875daefe664532f"
+    },
+    {
+      "path": "database/snapshot/production-schema-sanitized.sql",
+      "bytes": 23915,
+      "sha256": "16635d170a64d0c804b82a04c856a75a69527bc66754dba3e8f4f200bd787786"
+    },
+    {
+      "path": "docker/n8n/Dockerfile",
+      "bytes": 705,
+      "sha256": "185842732874c5560ec7b53c70a00df23e4cb701a098a2a79b1b7a5ffd5e6afa"
+    },
+    {
+      "path": "docker-compose.yml",
+      "bytes": 901,
+      "sha256": "41cb85bde8fb9d7972cb6aff21dfdf61363cb9c8da591e6325a86dcb826967d0"
+    },
+    {
+      "path": "docs/architecture.md",
+      "bytes": 1321,
+      "sha256": "13e988383f57a24be7bbc246847a1170cdcf35c73dd5dce31f42a4a86ee525fd"
+    },
+    {
+      "path": "docs/credentials.md",
+      "bytes": 1365,
+      "sha256": "2f234502f81fa24a6ed1dcbc7d0a578a9ed90da18edfdf03842cc771268d8086"
+    },
+    {
+      "path": "docs/data-ingestion.md",
+      "bytes": 1363,
+      "sha256": "4ef64a422c41bdc6d6f9acb7b185fb4e082b659ce4b1fb9c1393c70090058b11"
+    },
+    {
+      "path": "docs/database.md",
+      "bytes": 2285,
+      "sha256": "3df83d056f441b730c246f260021510ad9aac013f353763827292f590fc391a9"
+    },
+    {
+      "path": "docs/deployment.md",
+      "bytes": 2111,
+      "sha256": "08265b556bea4eb9ea70f0aad6e060b25fc899643995bfcf05a76e3c175e584b"
+    },
+    {
+      "path": "docs/images/01-inference-pipeline.png",
+      "bytes": 259182,
+      "sha256": "590ad75014dc19a0c7073cb61612b4575bec5f984888079d7b2c5afea16df594"
+    },
+    {
+      "path": "docs/images/02-data-ingestion-pipeline.png",
+      "bytes": 290075,
+      "sha256": "330b65d9c399eb9a78e9232e5c28ff14456844ba3658e111dd7af5c2ea6f93ce"
+    },
+    {
+      "path": "docs/images/03-data-deletion-pipeline.png",
+      "bytes": 179929,
+      "sha256": "5e48fdb34e3320b04c5b33f5c6bc3aea937c8bf023b8110bf0250e7cd5bf0e09"
+    },
+    {
+      "path": "docs/images/04-ai-self-healing-engine.png",
+      "bytes": 305018,
+      "sha256": "7afc71efaad00bbc4353112455eae8035fa9da8ef418a546726513ed280947d4"
+    },
+    {
+      "path": "docs/images/architecture-report-figure-5-1.png",
+      "bytes": 386885,
+      "sha256": "2641b173709999e2b8d70914afe69db26fac283920d09f1dafbd43a5d8910763"
+    },
+    {
+      "path": "docs/known-differences.md",
+      "bytes": 2140,
+      "sha256": "8a149ec98ff1a8d37206223125194d72d51bee7a5a80c164003435859bd4c7c5"
+    },
+    {
+      "path": "docs/original-deployment.md",
+      "bytes": 969,
+      "sha256": "43c79a7a0fc1cd80b0f395918069d86379f4ad10d62c354188427f901fbebe33"
+    },
+    {
+      "path": "docs/rag-pipeline.md",
+      "bytes": 1230,
+      "sha256": "c6bc2b680ba6e87651e9b579992dc2e94957c812bd93fd0f349e1f7f582c5a89"
+    },
+    {
+      "path": "docs/repository-audit.md",
+      "bytes": 1157,
+      "sha256": "b8ef1eb2af050a55441990256934c884b36e1c02bdd4c8d815102178b7c99e73"
+    },
+    {
+      "path": "docs/runtime-and-versions.md",
+      "bytes": 1315,
+      "sha256": "d184cdea3a247ae7f90ee325e52ce76e4add0fe5734caa7af4ac92e02bbf254b"
+    },
+    {
+      "path": "docs/security.md",
+      "bytes": 953,
+      "sha256": "bc966da927a942313fcdc28fb5d769dacb697c2ae2ff2aa58c85722d71ea15da"
+    },
+    {
+      "path": "docs/self-healing.md",
+      "bytes": 1373,
+      "sha256": "fba538b71d53a6adb4ea204558ce2c7d2ad5e77ea5299df1467842c4b54b75e0"
+    },
+    {
+      "path": "docs/testing.md",
+      "bytes": 2076,
+      "sha256": "9868f85ab28813b605dfd37c06e1db6089597bc7d9dc98523d17ec8ed9862d0f"
+    },
+    {
+      "path": "docs/workflows.md",
+      "bytes": 2319,
+      "sha256": "03f255e832fb2602530f88ef50b53e5c9f44f5e6ff4f7799b850af0d9507d59f"
+    },
+    {
+      "path": "examples/README.md",
+      "bytes": 569,
+      "sha256": "73ca31df77a1f6315949c54ae2b7d31d187222216acb1c0b1b1014bb18221d91"
+    },
+    {
+      "path": "examples/documents/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "examples/tabular/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "infrastructure/original-reference/n8n-docker-compose-original.yml",
+      "bytes": 319,
+      "sha256": "745d9e1a96456e5acf430079f09de75583355031187d38ea0f431ac5ca31baf7"
+    },
+    {
+      "path": "infrastructure/original-reference/waha-docker-compose-original.yaml",
+      "bytes": 2768,
+      "sha256": "546824bc2ddfb1f9d0c9b6ecee0956205b130deacf2286bbbe3a661eb1565318"
+    },
+    {
+      "path": "infrastructure/supabase/.env.example",
+      "bytes": 1889,
+      "sha256": "72b16cc34ad892b44e9f2f103c279e8ae0771bc3a3842123f29102d3b5f28985"
+    },
+    {
+      "path": "infrastructure/supabase/UPSTREAM_ASSETS.md",
+      "bytes": 1263,
+      "sha256": "3834b941fe4e6b75ec948053da2685304466c18aec44c242aed6ad1494fa6354"
+    },
+    {
+      "path": "infrastructure/supabase/docker-compose.yml",
+      "bytes": 19237,
+      "sha256": "79e3eaddd0f6cc58a12397494476ac14ce5d4722bc5a9163e5aa3938207b3ff5"
+    },
+    {
+      "path": "infrastructure/supabase/versions.md",
+      "bytes": 4646,
+      "sha256": "93e2211ca57d7940136ccdd73a07a8aed4c18ed674abe8473c4fe4c59c50bfdd"
+    },
+    {
+      "path": "prompts/01-ai-agent-chatbot-sisip/find-dataset--tooldescription.md",
+      "bytes": 669,
+      "sha256": "fa3cb3c2ce1ae76395743cd6b727f921ead032e0ab9a8a3c1f2b60661912e149"
+    },
+    {
+      "path": "prompts/01-ai-agent-chatbot-sisip/main-ai-agent--options-systemmessage.md",
+      "bytes": 3327,
+      "sha256": "c816a63d70f6650532f6ab2aa3c5122da118d0eafcdf3b4516a9858ea7211857"
+    },
+    {
+      "path": "prompts/01-ai-agent-chatbot-sisip/main-ai-agent--text.md",
+      "bytes": 271,
+      "sha256": "2c49af9a4de5eeafcdb3d56e2ae03433f134d655380258091c951609bb469a44"
+    },
+    {
+      "path": "prompts/01-ai-agent-chatbot-sisip/question-categorizer--messages-messagevalues-0-message.md",
+      "bytes": 785,
+      "sha256": "efe1e90575a3c9a66a7e7a9688631f4910584bad98b4e34d1ccab390f704920f"
+    },
+    {
+      "path": "prompts/01-ai-agent-chatbot-sisip/run-sql-query--tooldescription.md",
+      "bytes": 574,
+      "sha256": "5d0ed4dc7c22907b9b15206959b5625a5dcf5e8e8214cebd646ce14013bcc07b"
+    },
+    {
+      "path": "prompts/01-ai-agent-chatbot-sisip/search-sisip-knowledge--tooldescription.md",
+      "bytes": 358,
+      "sha256": "db07ba5a57a6b107813b03b20044bd8eb731ff89cb4262f0dfdcd046c3d1b898"
+    },
+    {
+      "path": "prompts/02-data-ingestion-pipeline/ai-agent-labelling--messages-messagevalues-0-message.md",
+      "bytes": 3319,
+      "sha256": "4c9515e0518297774c37e6d2df0e36684fa9aefc694024ba6e5d97819f611272"
+    },
+    {
+      "path": "prompts/04-ai-self-healing-engine/ai-agent-ingestion-deletion--text.md",
+      "bytes": 2724,
+      "sha256": "4f17cf12d6ee134350508ce78eabdf632af795374dda9bd66dc2bea673ca3733"
+    },
+    {
+      "path": "prompts/04-ai-self-healing-engine/diagnose-error1--text.md",
+      "bytes": 566,
+      "sha256": "ef343998f19b96de77c7580b8d0abaf3bfe28432fa3d914e2b33baa5727aa22f"
+    },
+    {
+      "path": "prompts/04-ai-self-healing-engine/find-dataset--tooldescription.md",
+      "bytes": 669,
+      "sha256": "fa3cb3c2ce1ae76395743cd6b727f921ead032e0ab9a8a3c1f2b60661912e149"
+    },
+    {
+      "path": "prompts/04-ai-self-healing-engine/main-ai-agent--options-systemmessage.md",
+      "bytes": 3327,
+      "sha256": "c816a63d70f6650532f6ab2aa3c5122da118d0eafcdf3b4516a9858ea7211857"
+    },
+    {
+      "path": "prompts/04-ai-self-healing-engine/main-ai-agent--text.md",
+      "bytes": 271,
+      "sha256": "2c49af9a4de5eeafcdb3d56e2ae03433f134d655380258091c951609bb469a44"
+    },
+    {
+      "path": "prompts/04-ai-self-healing-engine/question-categorizer--messages-messagevalues-0-message.md",
+      "bytes": 785,
+      "sha256": "efe1e90575a3c9a66a7e7a9688631f4910584bad98b4e34d1ccab390f704920f"
+    },
+    {
+      "path": "prompts/04-ai-self-healing-engine/run-sql-query--tooldescription.md",
+      "bytes": 574,
+      "sha256": "5d0ed4dc7c22907b9b15206959b5625a5dcf5e8e8214cebd646ce14013bcc07b"
+    },
+    {
+      "path": "prompts/04-ai-self-healing-engine/search-sisip-knowledge--tooldescription.md",
+      "bytes": 358,
+      "sha256": "db07ba5a57a6b107813b03b20044bd8eb731ff89cb4262f0dfdcd046c3d1b898"
+    },
+    {
+      "path": "prompts/README.md",
+      "bytes": 2053,
+      "sha256": "3ce3323f938bc83595d77383b194b458146caa41808c3ffe81e2e5d8f15be8fa"
+    },
+    {
+      "path": "scripts/apply-migrations.sh",
+      "bytes": 250,
+      "sha256": "f90a1861e7d6f3fc7f29f628a19f4fae26c5dc943c4b17b0b7c81c1353eeaec6"
+    },
+    {
+      "path": "scripts/code-nodes/01-ai-agent-chatbot-sisip/calculate-message-age.js",
+      "bytes": 1868,
+      "sha256": "291d26675dd00328688a8e7d2e386ffee2074b976a27f1c833ee37b3fd2ce748"
+    },
+    {
+      "path": "scripts/code-nodes/01-ai-agent-chatbot-sisip/clean-dirty-output-for-n8n-chat.js",
+      "bytes": 1805,
+      "sha256": "f6e30cd32335688d699aec1f555115b73fed73a2f3b27c5697ef3f696b792675"
+    },
+    {
+      "path": "scripts/code-nodes/01-ai-agent-chatbot-sisip/format-telegram-output.js",
+      "bytes": 2106,
+      "sha256": "5b2f66b97e5ddcc1cec647c5577a74661ea4484eef3b042776b5adb389866d00"
+    },
+    {
+      "path": "scripts/code-nodes/01-ai-agent-chatbot-sisip/format-whatsapp-output.js",
+      "bytes": 2978,
+      "sha256": "b0ad6569f04536754db746c93d8067f522b5445f4de036afb217f190002a68e8"
+    },
+    {
+      "path": "scripts/code-nodes/01-ai-agent-chatbot-sisip/transform-timezone-asia-jakarta.js",
+      "bytes": 700,
+      "sha256": "cfdb04e1b848e8810ac8ca1d1df63572631469a9e45e863689165728b110ee97"
+    },
+    {
+      "path": "scripts/code-nodes/02-data-ingestion-pipeline/cleaning-tabular-data.js",
+      "bytes": 1674,
+      "sha256": "41c9299c1d6ad1e97eb7d591866d6bfd5056b3821b861d441e56bbf695839ec8"
+    },
+    {
+      "path": "scripts/code-nodes/02-data-ingestion-pipeline/convert-to-zip.js",
+      "bytes": 356,
+      "sha256": "fc68437f7c5d10d00b418dfa4c06559ebd07c3ca6c886a97e83686db686e8443"
+    },
+    {
+      "path": "scripts/code-nodes/02-data-ingestion-pipeline/extract-docx-content.js",
+      "bytes": 1899,
+      "sha256": "3ae6cc1a918ae3eea359bc8e66ea90a4f82902f2414b03c6e1223916937741ec"
+    },
+    {
+      "path": "scripts/code-nodes/02-data-ingestion-pipeline/generate-insert-queries.js",
+      "bytes": 1094,
+      "sha256": "fc21625bbbd82b969cc2b400ef501b39871c40ccc82e1256ae8e608020133842"
+    },
+    {
+      "path": "scripts/code-nodes/02-data-ingestion-pipeline/generate-sql-schema.js",
+      "bytes": 2456,
+      "sha256": "7fb943eb64bf69c1f1afd3d22bc9eac94f7f20ca5bab8131655605e68cf442cc"
+    },
+    {
+      "path": "scripts/code-nodes/02-data-ingestion-pipeline/pembersihan-text.js",
+      "bytes": 1611,
+      "sha256": "b98a191d2811a0ef4af62e5c43fa18010f27ad6b97035e0c2de6cc9cdd5baea1"
+    },
+    {
+      "path": "scripts/code-nodes/04-ai-self-healing-engine/format-whatsapp-output2.js",
+      "bytes": 2978,
+      "sha256": "b0ad6569f04536754db746c93d8067f522b5445f4de036afb217f190002a68e8"
+    },
+    {
+      "path": "scripts/code-nodes/04-ai-self-healing-engine/format-whatsapp-output5.js",
+      "bytes": 2978,
+      "sha256": "b0ad6569f04536754db746c93d8067f522b5445f4de036afb217f190002a68e8"
+    },
+    {
+      "path": "scripts/code-nodes/04-ai-self-healing-engine/generate-fixed-patch-ingestion-deletion.js",
+      "bytes": 2181,
+      "sha256": "a0bd6d98cf021b024646b6202ba9fa558c91d74c4e565f2ab3ec0edac207b889"
+    },
+    {
+      "path": "scripts/code-nodes/README.md",
+      "bytes": 2197,
+      "sha256": "d77771290c76545e83f61f986312e8765024518dda3e2a45a763f89626181932"
+    },
+    {
+      "path": "scripts/prepare-supabase-assets-from-existing.sh",
+      "bytes": 783,
+      "sha256": "f733a377ac0b95a7da52c8b1ebf7ff880374d3ffdd3afcb0425ec02cfa4fac6b"
+    },
+    {
+      "path": "scripts/sanitize_workflows.py",
+      "bytes": 1673,
+      "sha256": "ed7356728a25a08e712c486f7f84e2a30565fdf9f6279ceb060fa274658bb70d"
+    },
+    {
+      "path": "scripts/validate_repo.py",
+      "bytes": 1743,
+      "sha256": "0d5c09bda2b0df3e11a33b493ba11f3d723234dfb2de2fd59797684083830eca"
+    },
+    {
+      "path": "scripts/verify-supabase-assets.sh",
+      "bytes": 801,
+      "sha256": "d596c2a9b2147b916a9f2652e63dc1737fb2731444a3ceca2f3d3d92be0f57c7"
+    },
+    {
+      "path": "tests/README.md",
+      "bytes": 579,
+      "sha256": "0db607239d8bcfb6ca71336e8c4f33582ab77450d52849e2d252ef6698dcddb7"
+    },
+    {
+      "path": "tests/functional-test-cases.csv",
+      "bytes": 1449,
+      "sha256": "1eec06aa8012b4c3b6315546b80e04f85e6c286be604891cae768ce2f26dcdcd"
+    },
+    {
+      "path": "tests/intent-classification-cases.csv",
+      "bytes": 2435,
+      "sha256": "99682e843ab8f882d7c7e3a9a4b6c7a350e91bd8915df70a71cd12fc426d1b2a"
+    },
+    {
+      "path": "tests/intent-confusion-matrix.csv",
+      "bytes": 153,
+      "sha256": "29d047d9d2bc72e750dcc2e813313712fc9180ac86401bf590b7042757acd9fe"
+    },
+    {
+      "path": "tests/retrieval-precision.csv",
+      "bytes": 1145,
+      "sha256": "d6791438674ce2f1bd6283c37f1bde2f78c927d6e4015d97356411b0755eb955"
+    },
+    {
+      "path": "tests/summary-metrics.csv",
+      "bytes": 314,
+      "sha256": "8f8374914889b1bdc5d8c64c0083b1bf8a1bc9834e2afc49a2fc76b644d50d5d"
+    },
+    {
+      "path": "tests/workflow-latency.csv",
+      "bytes": 2272,
+      "sha256": "20f8191fc9a390a770fce8bb51524dce0ad6f6b50cfc5c45e7d20e0d9ef56b39"
+    },
+    {
+      "path": "workflows/01-ai-agent-chatbot-sisip.json",
+      "bytes": 57676,
+      "sha256": "3f140276166679425cdd755e18095875ba73afa8c9c167f06a3efbc8f16f4558"
+    },
+    {
+      "path": "workflows/02-data-ingestion-pipeline.json",
+      "bytes": 81337,
+      "sha256": "832d7a79e015e08d375aea20c72edbe6ca71a1910c675c47ccf498e544b92215"
+    },
+    {
+      "path": "workflows/03-data-deletion-pipeline.json",
+      "bytes": 16413,
+      "sha256": "dd549826a7a203f3c62af0911d8fc3f6064cf302aeb77d428ed1f3e2d3aafae0"
+    },
+    {
+      "path": "workflows/04-ai-self-healing-engine.json",
+      "bytes": 74057,
+      "sha256": "6808c67d121ff6215af034540035ef00dd2db31ec54dfbeb18a8d1947c58bba9"
+    },
+    {
+      "path": "workflows/manifest.json",
+      "bytes": 2144,
+      "sha256": "f530dfeca5805cc761d4f8b46f40805266e2fa6ab7eb5477039465abd66e50f4"
+    },
+    {
+      "path": "workflows/node-inventory.csv",
+      "bytes": 18145,
+      "sha256": "ebde0b475769a6bf8be52c58444f35d8f2b7e76bf1ed48ab9e263d4f25d61806"
+    }
+  ]
+}

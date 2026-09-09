@@ -1,0 +1,41 @@
+no,jenis_pertanyaan,pertanyaan,output_aktual
+1,Narrative,Apa saja yang dipelajari dalam modul PBK Event Management?,Narrative
+2,Narrative,Bagaimana cara mengelola keselamatan di wisata tirta?,Narrative
+3,Narrative,Apa yang dimaksud dengan desa wisata?,Out of Scope
+4,Narrative,Apa saja yang diatur dalam modul K3 event?,Narrative
+5,Narrative,Bagaimana cara mengelola sanitasi dan amenitas event?,Narrative
+6,Narrative,Apa yang dipelajari dalam modul anggaran event?,Narrative
+7,Narrative,Bagaimana prosedur pemanduan keselamatan wisata tirta?,Narrative
+8,Narrative,Apa yang dimaksud dengan keselamatan dan keamanan wisata?,Narrative
+9,Narrative,Bagaimana cara menangani konflik di wisata tirta?,Out of Scope
+10,Narrative,Apa saja yang dipelajari dalam manajemen event desa wisata?,Narrative
+11,Statistical,Berapa total peserta sertifikasi kompetensi tahun 2025?,Statistical
+12,Statistical,Berapa jumlah LSP di Indonesia?,Statistical
+13,Statistical,Berapa jumlah LPK/BLK di Indonesia?,Statistical
+14,Statistical,Berapa jumlah peserta PBK di tahun 2025?,Statistical
+15,Statistical,Berapa jumlah peserta PBK di tahun 2026?,Statistical
+16,Statistical,Berapa total peserta sertifikasi di Bali?,Statistical
+17,Statistical,Berapa total peserta PBK Pemandu Wisata Tirta tahun 2026?,Statistical
+18,Statistical,Berapa jumlah modul PBK yang tersedia?,Statistical
+19,Statistical,Berapa total peserta sertifikasi kompetensi tahun 2025 di seluruh Indonesia?,Statistical
+20,Statistical,Berapa rata-rata peserta PBK per tahun?,Statistical
+21,General,Halo,General
+22,General,Selamat pagi,General
+23,General,Hai,General
+24,General,Selamat siang,General
+25,General,Assalamualaikum,General
+26,General,Hello,General
+27,General,Selamat sore,General
+28,General,Apa kabar?,General
+29,General,Selamat malam,General
+30,General,Halo ada yang bisa dibantu?,General
+31,Out-of-Scope,Apa itu blockchain?,Out-of-Scope
+32,Out-of-Scope,Bagaimana cara daftar kuliah?,Out-of-Scope
+33,Out-of-Scope,Berapa harga emas hari ini?,Out-of-Scope
+34,Out-of-Scope,Apa itu kecerdasan buatan?,Out-of-Scope
+35,Out-of-Scope,Bagaimana cara investasi saham?,Out-of-Scope
+36,Out-of-Scope,Siapa presiden Indonesia?,Out-of-Scope
+37,Out-of-Scope,Bagaimana cara membuat kue?,Out-of-Scope
+38,Out-of-Scope,Apa itu metaverse?,Out-of-Scope
+39,Out-of-Scope,Apa saja jurusan di UB?,Out-of-Scope
+40,Out-of-Scope,Berapa suhu di Jakarta hari ini?,Out-of-Scope

@@ -1,0 +1,10 @@
+no,pertanyaan,k,file_aktual,summary_file,jumlah_relevan,precision_at_k
+1,Apa itu sertifikasi PBK?,15,Modul PBK Event Management,Modul Pelatihan Berbasis Kompetensi,15,100.00%
+2,Apa itu KKNI?,10,KKNI,Dokumen Kerangka Kualifikasi Nasional Indonesia,7,70.00%
+3,Bagaimana cara mengelola keselamatan di wisata tirta?,10,Wisata Tirta,Panduan Keselamatan Wisata Tirta,8,80.00%
+4,Apa yang dimaksud dengan desa wisata?,20,Desa Wisata,Modul Manajemen Desa Wisata,14,70.00%
+5,Apa saja yang diatur dalam modul K3 event?,25,Modul K3 Event,Modul Kesehatan dan Keselamatan Kerja Event,20,80.00%
+6,Bagaimana cara mengelola sanitasi dan amenitas event?,20,Modul Sanitasi Event,Modul Manajemen Sanitasi dan Amenitas Event,15,75.00%
+7,Bagaimana prosedur pemanduan keselamatan wisata tirta?,35,Prosedur Pemanduan Wisata Tirta,Panduan Prosedur Pemanduan Keselamatan Wisata Tirta,29,82.86%
+8,Apa saja yang dipelajari dalam modul anggaran event?,30,Modul Anggaran Event,Modul Perencanaan dan Penganggaran Event,25,83.33%
+9,Apa saja yang dipelajari dalam manajemen event desa wisata?,30,Manajemen Event Desa Wisata,Modul Manajemen Event Desa Wisata,26,86.67%

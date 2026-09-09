@@ -1,0 +1,29 @@
+# Secrets
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Runtime data
+n8n-data/
+sessions/
+media/
+**/volumes/db/data/
+**/volumes/storage/
+**/volumes/snippets/*.sql
+*.dump
+*.backup
+backups/
+logs/
+*.log
+
+# Local tooling
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+__pycache__/
+*.pyc
+node_modules/

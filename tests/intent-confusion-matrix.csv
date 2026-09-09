@@ -1,0 +1,5 @@
+actual,pred_narrative,pred_statistical,pred_general,pred_out_of_scope
+Narrative,8,0,0,0
+Statistical,0,10,0,0
+General,0,0,10,0
+Out-of-Scope,2,0,0,10

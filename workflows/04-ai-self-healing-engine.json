@@ -1,0 +1,1926 @@
+{
+  "name": "AI Self-Healing Engine & Auto-Patching System",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        -160
+      ],
+      "id": "73a2b1eb-e92f-4a0d-8d1d-7e30d62e13a5",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "487a8bd7-9c90-4aef-9bab-2dfd3762f695",
+              "name": "Incident_Id",
+              "value": "={{$('Error Trigger').item.json.execution.error.timestamp }}",
+              "type": "string"
+            },
+            {
+              "id": "efd06f01-cdac-432f-a1f6-b7078ca10a29",
+              "name": "Date",
+              "value": "={{ new Date($('Error Trigger').item.json.execution.error.timestamp).toISOString().replace('T', ' ').substring(0, 19) }}",
+              "type": "string"
+            },
+            {
+              "id": "587c137d-996e-4bee-89ac-592fac0ebc7a",
+              "name": "Workflow_Id",
+              "value": "={{ $('Error Trigger').item.json.workflow.id }}",
+              "type": "string"
+            },
+            {
+              "id": "5d221606-4fb7-4395-8287-ed397d133939",
+              "name": "Workflow_Type",
+              "value": "={{ $('Error Trigger').item.json.workflow.name.split(' ').slice(1, 3).join(' ') }}",
+              "type": "string"
+            },
+            {
+              "id": "1d64e0b0-7721-4ab5-bc6f-319e47e23880",
+              "name": "Execution_Id",
+              "value": "={{ $('Error Trigger').item.json.execution.id }}",
+              "type": "string"
+            },
+            {
+              "id": "18e404f2-a5e4-437c-8c3c-d199c7b59ae6",
+              "name": "Execution_Url",
+              "value": "={{ $('Error Trigger').item.json.execution.url }}",
+              "type": "string"
+            },
+            {
+              "id": "6c892fc8-7f72-408f-8cf4-cab47c7795f1",
+              "name": "Last_Node",
+              "value": "={{ $('Error Trigger').item.json.execution.lastNodeExecuted }}",
+              "type": "string"
+            },
+            {
+              "id": "800ad402-e488-4807-820e-bc409dd94d82",
+              "name": "Failed_Node",
+              "value": "={{ $('Error Trigger').item.json.execution.error.node.name }}",
+              "type": "string"
+            },
+            {
+              "id": "78e34886-db46-4a93-8d1e-5534382514c3",
+              "name": "Error_Name",
+              "value": "={{ $('Error Trigger').item.json.execution.error.name }}",
+              "type": "string"
+            },
+            {
+              "id": "47b386c3-7a79-4e03-9071-025cb6efbf27",
+              "name": "Error_Message",
+              "value": "={{ $('Error Trigger').item.json.execution.error.message }}",
+              "type": "string"
+            },
+            {
+              "id": "77dea16c-32a8-45c4-b855-f9e6c336fd33",
+              "name": "Error_Description",
+              "value": "={{ $('Error Trigger').item.json.execution.error.description }}",
+              "type": "string"
+            },
+            {
+              "id": "1aeafc14-1fc0-4996-b752-544c627d8d9e",
+              "name": "Stack",
+              "value": "={{ $('Error Trigger').item.json.execution.error.stack }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -208,
+        32
+      ],
+      "id": "b645a00c-041c-430f-aa68-1d4a12fc8cbb",
+      "name": "Extract Raw Error"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.workflow.id }}",
+              "operation": "notEqual",
+              "value2": "={{ $workflow.id }}"
+            }
+          ]
+        }
+      },
+      "id": "5a537f03-1f9b-4229-88fc-2e1d0e5fd2e3",
+      "name": "Filter: Ignore Self",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        -208,
+        -160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## AI Corrected (Ingestion & Deletion)\nThe Switch node directs traffic based on the AI's verdict. The JavaScript node injects the AI's corrected value into the workflow JSON. The n8n API then updates the workflow live and notifies Slack of the successful repair.",
+        "height": 272,
+        "width": 1184,
+        "color": 7
+      },
+      "id": "a3b4b0ff-ed2b-48ea-ade5-5b91bf4c772a",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        976,
+        80
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Retry Workflow (Ingestion & Deletion)\nIf a retry is needed, the Wait node pauses execution to allow the external service time to recover. And it automatically retries the workflow",
+        "height": 256,
+        "width": 1008,
+        "color": 7
+      },
+      "id": "d6456390-6bbd-4680-99f2-ce8d7a03a858",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        976,
+        368
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Skip Auto-Correction (Ingestion & Deletion)\nIf the AI cannot determine a fix or the error is marked as \"MANUAL,\" the system skips auto-correction and sends a detailed diagnostic report to Slack for human review.",
+        "height": 288,
+        "width": 640,
+        "color": 7
+      },
+      "id": "91cf6e24-6373-4b51-81dc-8e4a574cf754",
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        976,
+        640
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## I'm a note ",
+        "height": 400,
+        "width": 816
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        128,
+        64
+      ],
+      "typeVersion": 1,
+      "id": "92eff5f4-fc5d-4bcd-bbb3-29541a85dccd",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "## I'm a note ",
+        "height": 384,
+        "width": 816
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        128,
+        -336
+      ],
+      "typeVersion": 1,
+      "id": "a814b753-fa8f-4872-823f-96b3ae4cbdea",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=\"You are an n8n Senior Engineer.\n\nCONTEXT:\n\nFailed Node: {{ $node[\"Error Trigger\"].json.workflow.name }}\n\nError: {{ $node[\"Error Trigger\"].json.execution.error.message }}\n\nWorkflow JSON: {{ JSON.stringify($node[\"Get Workflow JSON\"].json) }}\n\nTASK:\n\nDecide if this is a 'RETRY' (network/timeout) or a 'FIX' (logic/wrong param).\n\nIf 'FIX', identify the specific parameter name in the failed node that caused the error.\n\nProvide the corrected value for that parameter.\n\nReturn the result in the structured format.\"",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "id": "72f6cc69-c06b-46d2-8acd-2b408a9fbfd2",
+      "name": "Diagnose Error1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        528,
+        -256
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "jsonSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"state\": { \"type\": \"string\", \"enum\": [\"RETRY\", \"FIX\"] },\n    \"diagnosis\": { \"type\": \"string\" },\n    \"patch\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"parameterName\": { \"type\": \"string\" },\n        \"newValue\": { \"type\": \"string\" }\n      }\n    }\n  }\n}"
+      },
+      "id": "1dd4d5a9-03f6-461c-9b03-3826e8be1605",
+      "name": "Decision Schema1",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        688,
+        -80
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "version": 3,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "62c120fd-2211-45aa-885d-ba90ddadabbd",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.output.state }}",
+                    "rightValue": "RETRY"
+                  }
+                ]
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 3,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "f012633d-d102-4286-a595-6699bb09ee8b",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.output.state }}",
+                    "rightValue": "SKIP"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ae64df5e-a581-41d0-8a05-deebeeba854a",
+      "name": "Determine Action3",
+      "type": "n8n-nodes-base.switch",
+      "position": [
+        800,
+        -208
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "url": "={{$env.N8N_BASE_URL}}/api/v1/workflows/{{$json.workflow.id}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-N8N-API-KEY",
+              "value": "{{$env.N8N_API_KEY}}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "835dd26f-6586-40a7-9afe-b01594f8408c",
+      "name": "Get Workflow",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        384,
+        -192
+      ],
+      "typeVersion": 4.1,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "unit": "minutes"
+      },
+      "id": "979fce6e-b847-4f06-9299-bd362624dae5",
+      "name": "Cool Down2",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        1008,
+        -608
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "content": "## Retry Workflow\n### If a retry is needed, the Wait node pauses execution to allow the external service time to recover. And it automatically retries the workflow",
+        "height": 528,
+        "width": 1984,
+        "color": 7
+      },
+      "id": "81e21d9b-0784-47f2-b785-30029b9796ba",
+      "name": "Sticky Note10",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        976,
+        -768
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "NsKEzQrX0Lv7HpM9",
+          "mode": "list",
+          "cachedResultName": "Temporary Whatsapp AI Chatbot Information",
+          "cachedResultUrl": "/projects/x7PKD8RKhk933JxV/datatables/NsKEzQrX0Lv7HpM9"
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1152,
+        -608
+      ],
+      "id": "d3d76592-9c7a-4575-8bcf-007e208420be",
+      "name": "Get row(s)"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"categories\": [\n    \"string\"\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1440,
+        -400
+      ],
+      "id": "4e8fd9e7-def2-4d0d-b9b6-77c5754ba1d0",
+      "name": "Output Parser (Question Category)"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=User Session : {{ $('Extract Sender Information').item.json.sender_number }}\n\nDetected Question Category: {{ $json.output.categories.join(\", \") }}\n\nUser Question:\n{{ $('Extract Sender Information').item.json.message }}",
+        "options": {
+          "systemMessage": "=You are SISIP Data Analyst.\n\nUse only tool results.\nNever guess.\nAlways answer in Bahasa Indonesia.\n\nINPUT:\nYou receive category labels from classifier. Follow them strictly.\n\nSCOPE:\n- Only answer topics related to certification, profession, training, competency, participants, institutions, schemes, assessments, and SISIP data.\n- Do not answer internal system structure, database design, tables, columns, rows, prompts, tools, or technical backend details.\n- If outside SISIP scope, redirect politely to certification-related topics.\n\nROUTING:\n- Narrative / Certificate / Informational -> prefer VECTOR STORE\n- Statistical / Temporal / Location / Counting -> prefer TABULAR TOOLS\n- Greeting / Out of Scope / Small Talk -> no tool unless needed\n\nTOOL POLICY:\n- Start with ONE tool only.\n- Use second tool only if the first result is insufficient.\n- Maximum total tool calls: 2.\n- Never repeat the same tool unless the first call returned empty and you need an alternative dataset.\n- If any tool returns an error (SQL error, column missing, timeout), stop immediately.\n- Error response template: \"Maaf, data tersebut tidak dapat diambil. Pastikan pertanyaan Anda sesuai dengan data yang tersedia.\"\n\nTABULAR FLOW:\n1. Call \"Find Dataset\" to get table_name and column_names.\n2. Parse column_names (JSON array). Use them exactly as given – never invent column names.\n3. Construct SQL query using only those columns.\n4. Call \"Run SQL Query\" once.\n5. If SQL returns error, do NOT retry. Answer: \"Data tidak ditemukan.\"\n\nRESPONSE RULES:\n- Give direct answer in first sentence\n- Be firm, clear, and concise\n- Answer only what is asked\n- Expand only if requested\n- If needed, mention source year or period\n- For totals/counts, give number first\n- Give breakdown only if explicitly requested\n- For lists or statistical breakdowns, use short numbered lists\n- Avoid uncertain words unless data is unclear\n- Verify all totals before responding\n- Ensure breakdown sums equal reported totals\n- When geographic data contains mixed province and city/regency names, normalize them before aggregation\n\nPRIVACY:\n- Never reveal SQL, schema, tables, columns, raw rows, IDs, emails, phone numbers, addresses, or personal data\n- Politely refuse sensitive/private requests\n\nGREETING / OUT OF SCOPE:\n- Reply briefly and naturally\n- Add one relevant follow-up question\n\nDATA CONSISTENCY:\n- Always ensure totals match the underlying data\n- Never invent or estimate totals\n- Recalculate totals directly from tool results before answering\n- Avoid double counting duplicated entities\n- If province and city/regency data overlap, do not count both unless explicitly separated\n- Prefer normalized province-level aggregation\n- If data inconsistency exists, explicitly mention it instead of guessing\n\nFORMAT:\n- Never use tables in any form\n- Never use markdown tables\n- Never use \"|\" separators\n- Never format responses as rows and columns\n- Use natural conversational formatting\n- Use short paragraphs\n- Use numbered lists for rankings or breakdowns\n- Keep responses mobile-friendly and easy to read in chat apps\n- Avoid dense formatting\n- No labels unless necessary\n\nIF NO DATA:\nMaaf, data tersebut belum tersedia di SISIP saat ini. Apakah Anda ingin saya bantu topik sertifikasi lainnya?",
+          "maxIterations": 10,
+          "returnIntermediateSteps": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1648,
+        -608
+      ],
+      "id": "4feee017-a6cd-4845-b112-6ecf830a3db5",
+      "name": "Main AI Agent",
+      "alwaysOutputData": false,
+      "retryOnFail": false,
+      "maxTries": 5,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "content": "## 1 : Penentuan Arah Pertanyaan\n",
+        "height": 432,
+        "width": 304,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1264,
+        -688
+      ],
+      "typeVersion": 1,
+      "id": "11b1a322-ac22-43b5-9f65-d3e7b1c27fd4",
+      "name": "Sticky Note14"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{$json.message}}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You classify SISIP user queries.\n\nReturn all matching labels:\n\nNarrative = info, definition, procedure, regulation, requirements, document content\nCertificate-Type = mentions certification type/program (PBK, Mandiri, skema, Barista, etc)\nStatistical = count, total, average, compare, list database records\nTemporal = year, month, date, period, trend\nLocation = province, city, region, area in Indonesia\nOut-of-Scope = unrelated to SISIP\nIf user asks greetings only:\n[\"General\"]\n\nRules:\n- Counting people/certificates/LSP/records = Statistical\n- Counting units, levels, chapters, principles = Narrative\n- Multiple labels allowed\n- If unrelated use Out-of-Scope\n\nOutput only:\n{\"categories\":[\"...\"]}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1296,
+        -608
+      ],
+      "id": "dedbede9-de9a-4dd7-aaef-3cc3898b8cb4",
+      "name": "Question Categorizer",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 2000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "content": "## 2 : Otak Utama Chatbot dan kirim jawaban",
+        "height": 432,
+        "width": 950,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1600,
+        -688
+      ],
+      "typeVersion": 1,
+      "id": "2129c9fa-e5e1-4f3f-9fb0-5ed5411f022c",
+      "name": "Sticky Note15"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Extract Sender Information').item.json.sender_number }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1792,
+        -400
+      ],
+      "id": "3ec6c501-452d-4c7a-9e68-77d997185d19",
+      "name": "Chat Memory (n8n Chat)"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Find the most relevant dataset from record_manager based on the user question.\n\nReturns a single row with:\n- table_name : string (physical table name in database)\n- column_names : JSON array, e.g. [\"provinsi\", \"tahun\", \"jumlah_peserta\"]\n- data_type : 'tabular' or 'text'\n\nIMPORTANT:\n- You MUST parse column_names as a JSON array.\n- Use those column names EXACTLY in your SQL query (case-sensitive, as returned).\n- Never assume a column exists unless it appears in column_names.\n\nExample:\nIf column_names = [\"provinsi\", \"tahun\", \"jumlah_peserta\"], your SQL must use \"provinsi\", not \"Provinsi\" or \"province\".",
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "record_manager",
+          "mode": "list",
+          "cachedResultName": "record_manager"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "where": {
+          "values": [
+            {
+              "column": "table_name",
+              "condition": "IS NOT NULL"
+            },
+            {
+              "column": "column_names",
+              "condition": "IS NOT NULL"
+            },
+            {
+              "column": "data_type",
+              "condition": "IS NOT NULL"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.6,
+      "position": [
+        1936,
+        -400
+      ],
+      "id": "88fa6da2-d622-44c0-a18d-63dd30be76b2",
+      "name": "Find Dataset"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Find the most relevant dataset in record_manager for the user question. Execute a SQL query on the previously selected dataset table.\n\nReturns:\n\n* table_name\n* column_names\n* data_type\n\nRULES:\n- Only run SELECT queries. Never DELETE, DROP, UPDATE, INSERT.\n- Always add LIMIT 50 to avoid huge results.\n- Do not query system tables (pg_catalog, information_schema).\n- If query fails (error column does not exist), do not retry.\n\nError will be returned as text. You must handle it by stating data is unavailable.\n",
+        "operation": "executeQuery",
+        "query": "{{ $fromAI('sql_query') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.6,
+      "position": [
+        2064,
+        -400
+      ],
+      "id": "95935b51-7d89-4c2b-9ef3-d1b9eed7d246",
+      "name": "Run SQL Query"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "=Retrieve qualitative SISIP information such as definitions, procedures, requirements, schemes, regulations, and competency standards.\n\nUse for:\n\n* explanation\n* requirements\n* procedures\n* certification schemes\n* competency units\n\nDo not use for counts, statistics, or record listings.",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "topK": 5,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        2176,
+        -400
+      ],
+      "id": "993dd126-59e2-44d5-8d06-1b99531a31e7",
+      "name": "Search SISIP Knowledge"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 1024,
+          "temperature": 0,
+          "topP": 1,
+          "frequencyPenalty": 0,
+          "presencePenalty": 0,
+          "maxRetries": 2
+        }
+      },
+      "type": "n8n-nodes-deepseek-reasoner.deepSeekReasoner",
+      "typeVersion": 1,
+      "position": [
+        1296,
+        -400
+      ],
+      "id": "d85860fb-2adb-465c-a6a7-6ae4bd747ad0",
+      "name": "DeepSeek Chat Categorizer"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        2432,
+        -400
+      ],
+      "id": "c7c35303-ff99-4138-be73-35719586446e",
+      "name": "Embeddings HuggingFace Inference"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        1648,
+        -400
+      ],
+      "id": "e68523f4-7bec-43d0-9f5a-6654c8acf96e",
+      "name": "DeepSeek Chat Model"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "={{ $('Extract Sender Information').item.json.session }}",
+        "chatId": "={{ $('Extract Sender Information').item.json.sender_number }}",
+        "text": "={{ $json.text }}",
+        "linkPreview": false,
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-waha.WAHA",
+      "typeVersion": 202411,
+      "position": [
+        2192,
+        -624
+      ],
+      "id": "149d5373-5c5d-46ea-af48-5584ab1ba80f",
+      "name": "Send Whatsapp Message2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Ambil output mentah\nlet rawText = $input.first().json.output || \"\";\n\n/**\n * FUNGSI PEMBERSIH UTAMA (Bracket Counter Logic)\n * Fungsi ini membersihkan log [Used tools: ...]\n */\nfunction removeSmartly(text, startMarker) {\n    if (!text.includes(startMarker)) return text;\n\n    let startIndex = text.indexOf(startMarker);\n    let depth = 0;\n    let foundStart = false;\n    let endIndex = -1;\n\n    for (let i = startIndex; i < text.length; i++) {\n        if (text[i] === '[') {\n            depth++;\n            foundStart = true;\n        } else if (text[i] === ']') {\n            depth--;\n        }\n\n        if (foundStart && depth === 0) {\n            endIndex = i;\n            break; \n        }\n    }\n\n    if (endIndex !== -1) {\n        let remainingText = text.substring(endIndex + 1);\n        return removeSmartly(remainingText, startMarker);\n    }\n\n    return text;\n}\n\n// 2. Jalankan pembersihan Cerdas (Hapus Tools Log)\nrawText = removeSmartly(rawText, \"[Used tools:\");\n\n// 3. TAHAP FINAL: Hapus sisa-sisa artifact \nrawText = rawText.replace(/^[\\s\\}\\]\"]+/g, '');\n\n// 4. Hapus artifact JSON spesifik n8n\nrawText = rawText.replace(/\\{\"to\":.*?\\}/g, '');\n\n// ============================================================\n// 5. LANGKAH BARU: FORMATTING KHUSUS WHATSAPP\n//    (Mengubah HTML/Markdown menjadi WA Style)\n// ============================================================\n\n// A. Handle Newlines HTML (<br> dan </p>)\nrawText = rawText.replace(/<br\\s*\\/?>/gi, '\\n');\nrawText = rawText.replace(/<\\/p>/gi, '\\n\\n');\nrawText = rawText.replace(/<p>/gi, '');\n\n// B. Ubah Header Markdown (### Judul) menjadi *JUDUL* (Tebal & Kapital)\n//    WA tidak punya heading, jadi kita akali dengan huruf kapital tebal\nrawText = rawText.replace(/^#{1,6}\\s+(.*)$/gm, (match, p1) => {\n    return `*${p1.toUpperCase()}*`;\n});\n\n// C. Ubah BOLD: \n//    HTML (<b>, <strong>) & Markdown (**) -> WhatsApp (*)\nrawText = rawText.replace(/<b>(.*?)<\\/b>/gi, '*$1*');\nrawText = rawText.replace(/<strong>(.*?)<\\/strong>/gi, '*$1*');\nrawText = rawText.replace(/\\*\\*(.*?)\\*\\*/g, '*$1*');\n\n// D. Ubah ITALIC: \n//    HTML (<i>, <em>) -> WhatsApp (_)\nrawText = rawText.replace(/<i>(.*?)<\\/i>/gi, '_$1_');\nrawText = rawText.replace(/<em>(.*?)<\\/em>/gi, '_$1_');\n\n// E. Ubah MONOSPACE/CODE: \n//    HTML (<pre>, <code>) & Markdown (`) -> WhatsApp (```)\nrawText = rawText.replace(/<pre>(.*?)<\\/pre>/gs, '```$1```');\nrawText = rawText.replace(/<code>(.*?)<\\/code>/g, '```$1```');\nrawText = rawText.replace(/`(.*?)`/g, '```$1```');\n\n// F. Ubah List HTML (<li>) menjadi strip biasa\nrawText = rawText.replace(/<li>(.*?)<\\/li>/gi, '- $1\\n');\nrawText = rawText.replace(/<\\/?ul>/gi, '');\nrawText = rawText.replace(/<\\/?ol>/gi, '');\n\n// G. Bersihkan tag HTML lain yang tersisa (misal <span>, <div>)\nrawText = rawText.replace(/<[^>]*>/g, '');\n\n// ============================================================\n\n// 6. Trim spasi kosong akhir\nconst cleanText = rawText.trim();\n\nreturn {\n  json: {\n    text: cleanText\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2016,
+        -624
+      ],
+      "id": "8ebad321-cec7-4b7a-bf08-bf6429816708",
+      "name": "Format Whatsapp Output2"
+    },
+    {
+      "parameters": {
+        "content": "## Skip Auto-Correction\nIf the AI cannot determine a fix or the error is marked as \"MANUAL,\" the system skips auto-correction and sends a detailed diagnostic report to Slack for human review.",
+        "height": 288,
+        "width": 640,
+        "color": 7
+      },
+      "id": "fad0638c-17c5-48a3-b97f-5ab5aa8dd8b3",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        976,
+        -224
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "={{ $('Extract Sender Information').item.json.session }}",
+        "chatId": "={{ $('Extract Sender Information').item.json.sender_number }}",
+        "text": "={{ $json.text }}",
+        "linkPreview": false,
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-waha.WAHA",
+      "typeVersion": 202411,
+      "position": [
+        2608,
+        -416
+      ],
+      "id": "74da790d-b4f1-4f12-9329-2abd3f95f86f",
+      "name": "Send Whatsapp Message5"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Ambil output mentah\nlet rawText = $input.first().json.output || \"\";\n\n/**\n * FUNGSI PEMBERSIH UTAMA (Bracket Counter Logic)\n * Fungsi ini membersihkan log [Used tools: ...]\n */\nfunction removeSmartly(text, startMarker) {\n    if (!text.includes(startMarker)) return text;\n\n    let startIndex = text.indexOf(startMarker);\n    let depth = 0;\n    let foundStart = false;\n    let endIndex = -1;\n\n    for (let i = startIndex; i < text.length; i++) {\n        if (text[i] === '[') {\n            depth++;\n            foundStart = true;\n        } else if (text[i] === ']') {\n            depth--;\n        }\n\n        if (foundStart && depth === 0) {\n            endIndex = i;\n            break; \n        }\n    }\n\n    if (endIndex !== -1) {\n        let remainingText = text.substring(endIndex + 1);\n        return removeSmartly(remainingText, startMarker);\n    }\n\n    return text;\n}\n\n// 2. Jalankan pembersihan Cerdas (Hapus Tools Log)\nrawText = removeSmartly(rawText, \"[Used tools:\");\n\n// 3. TAHAP FINAL: Hapus sisa-sisa artifact \nrawText = rawText.replace(/^[\\s\\}\\]\"]+/g, '');\n\n// 4. Hapus artifact JSON spesifik n8n\nrawText = rawText.replace(/\\{\"to\":.*?\\}/g, '');\n\n// ============================================================\n// 5. LANGKAH BARU: FORMATTING KHUSUS WHATSAPP\n//    (Mengubah HTML/Markdown menjadi WA Style)\n// ============================================================\n\n// A. Handle Newlines HTML (<br> dan </p>)\nrawText = rawText.replace(/<br\\s*\\/?>/gi, '\\n');\nrawText = rawText.replace(/<\\/p>/gi, '\\n\\n');\nrawText = rawText.replace(/<p>/gi, '');\n\n// B. Ubah Header Markdown (### Judul) menjadi *JUDUL* (Tebal & Kapital)\n//    WA tidak punya heading, jadi kita akali dengan huruf kapital tebal\nrawText = rawText.replace(/^#{1,6}\\s+(.*)$/gm, (match, p1) => {\n    return `*${p1.toUpperCase()}*`;\n});\n\n// C. Ubah BOLD: \n//    HTML (<b>, <strong>) & Markdown (**) -> WhatsApp (*)\nrawText = rawText.replace(/<b>(.*?)<\\/b>/gi, '*$1*');\nrawText = rawText.replace(/<strong>(.*?)<\\/strong>/gi, '*$1*');\nrawText = rawText.replace(/\\*\\*(.*?)\\*\\*/g, '*$1*');\n\n// D. Ubah ITALIC: \n//    HTML (<i>, <em>) -> WhatsApp (_)\nrawText = rawText.replace(/<i>(.*?)<\\/i>/gi, '_$1_');\nrawText = rawText.replace(/<em>(.*?)<\\/em>/gi, '_$1_');\n\n// E. Ubah MONOSPACE/CODE: \n//    HTML (<pre>, <code>) & Markdown (`) -> WhatsApp (```)\nrawText = rawText.replace(/<pre>(.*?)<\\/pre>/gs, '```$1```');\nrawText = rawText.replace(/<code>(.*?)<\\/code>/g, '```$1```');\nrawText = rawText.replace(/`(.*?)`/g, '```$1```');\n\n// F. Ubah List HTML (<li>) menjadi strip biasa\nrawText = rawText.replace(/<li>(.*?)<\\/li>/gi, '- $1\\n');\nrawText = rawText.replace(/<\\/?ul>/gi, '');\nrawText = rawText.replace(/<\\/?ol>/gi, '');\n\n// G. Bersihkan tag HTML lain yang tersisa (misal <span>, <div>)\nrawText = rawText.replace(/<[^>]*>/g, '');\n\n// ============================================================\n\n// 6. Trim spasi kosong akhir\nconst cleanText = rawText.trim();\n\nreturn {\n  json: {\n    text: cleanText\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2768,
+        -624
+      ],
+      "id": "845eec15-9c3d-4ad3-97c0-1d32a917485e",
+      "name": "Format Whatsapp Output5"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2768,
+        -416
+      ],
+      "id": "a4246b4e-97f1-4c52-a9bc-f766c99cc018",
+      "name": "Error Message (Skip Auto-Correction) Done2"
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2608,
+        -624
+      ],
+      "id": "3c6458e6-a25b-4b67-8141-c827f30cc0a0",
+      "name": "Get many threads2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c915f50b-88f2-4801-a2c7-3bbb999e4615",
+              "leftValue": "={{ $json.Workflow_Type }}",
+              "rightValue": "AI Agent",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -48,
+        32
+      ],
+      "id": "f6a036a8-5d7a-493a-a94f-cc50c15f1f69",
+      "name": "Workflow Filtering"
+    },
+    {
+      "parameters": {
+        "content": "## I'm a note ",
+        "height": 416,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -448,
+        -224
+      ],
+      "typeVersion": 1,
+      "id": "35c92ee9-5765-4ba9-b022-fd907f7907d0",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "251571c8-a230-4899-89f3-b2a816d561fa",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "=Skipped",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -384,
+        32
+      ],
+      "id": "d87ef8fb-f584-4a77-8e38-c161bd265424",
+      "name": "Different Item Filtering"
+    },
+    {
+      "parameters": {
+        "model": "=deepseek-reasoner",
+        "options": {}
+      },
+      "type": "n8n-nodes-deepseek-reasoner.deepSeekReasoner",
+      "typeVersion": 1,
+      "position": [
+        512,
+        -80
+      ],
+      "id": "f251ee0b-2c62-463f-bd1f-4746a4e39dc0",
+      "name": "DeepSeek Reasoner"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "CkdsEmlDwtAkpEl2",
+          "mode": "list",
+          "cachedResultName": "temporary Error Execute Information",
+          "cachedResultUrl": "/projects/x7PKD8RKhk933JxV/datatables/CkdsEmlDwtAkpEl2"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "Workflow_Url",
+              "keyValue": "={{$env.N8N_BASE_URL}}/workflow/kccUnN3B3PFqJO0Wz35GK/executions/534"
+            }
+          ]
+        },
+        "limit": 1,
+        "orderBy": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        -48,
+        -160
+      ],
+      "id": "1beccfe5-6ddb-4472-99f3-67d9e7e42db5",
+      "name": "Error Status Check",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "model": "deepseek-reasoner",
+        "options": {}
+      },
+      "type": "n8n-nodes-deepseek-reasoner.deepSeekReasoner",
+      "typeVersion": 1,
+      "position": [
+        352,
+        320
+      ],
+      "id": "3a3519cf-a7c4-4d36-b5d4-da02b9a97440",
+      "name": "Deepseek LLM (Ingestion & Deletion)"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"state\": { \"type\": \"string\", \"enum\": [\"RETRY\", \"FIX\", \"SKIP\"] },\n    \"diagnosis\": { \"type\": \"string\" },\n    \"patch\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"nodeName\": { \"type\": \"string\" },\n        \"parameterName\": { \"type\": \"string\" },\n        \"newValue\": { \"type\": \"string\" }\n      }\n    }\n  }\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        496,
+        320
+      ],
+      "id": "af9a56a2-67fb-4f2f-9f7b-b0561789a061",
+      "name": "Decision Schema (Ingestion & Deletion)"
+    },
+    {
+      "parameters": {
+        "url": "={{$env.N8N_BASE_URL}}/api/v1/workflows/{{$json.Workflow_Id}}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "n8nApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-N8N-API-KEY",
+              "value": "{{$env.N8N_API_KEY}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1351874f-ef1d-4585-8d9f-aff5967baad9",
+      "name": "Get Workflow (Ingestion & Deletion)",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        192,
+        208
+      ],
+      "typeVersion": 4.1,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "CkdsEmlDwtAkpEl2",
+          "mode": "list",
+          "cachedResultName": "temporary Error Execute Information",
+          "cachedResultUrl": "/projects/x7PKD8RKhk933JxV/datatables/CkdsEmlDwtAkpEl2"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Workflow_Url": "={{ $('Error Trigger').item.json.execution.url }}",
+            "Status": "={{ $json.output.state }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Workflow_Url",
+              "displayName": "Workflow_Url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        624,
+        208
+      ],
+      "id": "1ed0018a-cd21-45b1-9106-7a3708d11024",
+      "name": "Insert Error Status Table (Ingestion & Deletion)"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "version": 3,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "62c120fd-2211-45aa-885d-ba90ddadabbd",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.Status }}",
+                    "rightValue": "FIX"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "FIX"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 3,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "f012633d-d102-4286-a595-6699bb09ee8b",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.Status }}",
+                    "rightValue": "RETRY"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "RETRY"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 3,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "3d411619-4d35-41af-980c-c36c15de839a",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.Status }}",
+                    "rightValue": "SKIP"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "SKIP"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5d86d124-d389-4a53-9060-a13bed78250f",
+      "name": "Determine Action (Ingestion & Deletion)",
+      "type": "n8n-nodes-base.switch",
+      "position": [
+        800,
+        192
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.N8N_BASE_URL}}/api/v1/executions/{{$node[\"Error Trigger\"].json.execution.id}}/retry",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-N8N-API-KEY",
+              "value": "your_api_key"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b6d12a98-ffcc-4688-81ed-7985652c7914",
+      "name": "Retry Fixed Execution (Ingestion & Deletion)",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1792,
+        176
+      ],
+      "typeVersion": 4.1
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{$env.N8N_BASE_URL}}/api/v1/workflows/{{ $node[\"Error Trigger\"].json.workflow.id}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-N8N-API-KEY",
+              "value": "{{$env.N8N_API_KEY}}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"{{ $json.workflowJSON.name }}\",\n  \"nodes\": {{ JSON.stringify($json.workflowJSON.nodes) }},\n  \"connections\": {{ JSON.stringify($json.workflowJSON.connections) }},\n  \"settings\": {\n    \"executionOrder\": \"v1\"\n  }\n}",
+        "options": {}
+      },
+      "id": "ef867533-241c-4802-b108-caffce68b368",
+      "name": "Update Fixed Workflow (Ingestion & Deletion)",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1600,
+        176
+      ],
+      "typeVersion": 4.1
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Ambil data dengan syntax n8n v1+ yang lebih stabil (menggunakan $items)\nconst workflowData = $items(\"Get Workflow (Ingestion & Deletion)\")[0].json;\nconst aiResponse = $items(\"AI Agent (Ingestion & Deletion)\")[0].json.output;\n\n// 2. JANGAN GUNAKAN structuredClone ATAU JSON.parse. \n// Kita gunakan teknik \"Shallow Copy\" agar Sandbox tidak memory leak.\nconst newNodes = [];\nlet fixedParameter = 'none';\n\n// 3. Ekstrak data AI dengan aman\nconst patch = aiResponse && aiResponse.patch ? aiResponse.patch : null;\nconst targetNodeName = patch ? patch.nodeName : null;\nconst paramToFix = patch ? patch.parameterName : null;\nconst newValue = patch ? patch.newValue : null;\n\nconst shouldPatch = targetNodeName && targetNodeName !== \"N/A\" && paramToFix !== \"N/A\";\n\n// 4. Looping array\nfor (let i = 0; i < workflowData.nodes.length; i++) {\n  const originalNode = workflowData.nodes[i];\n  \n  if (shouldPatch && originalNode.name === targetNodeName) {\n    const patchedNode = { ...originalNode };\n    patchedNode.parameters = { ...(patchedNode.parameters || {}) };\n    \n    // --- PERBAIKAN DI SINI ---\n    // 1. Terapkan nilai baru ke parameter yang benar\n    patchedNode.parameters[paramToFix] = newValue;\n    \n    // 2. Hapus parameter yang salah jika ada (PENTING!)\n    // Jika AI bilang harus fix 'id', kita pastikan 'idd' dihapus agar tidak bentrok\n    if (paramToFix === 'id' && patchedNode.parameters.hasOwnProperty('idd')) {\n      delete patchedNode.parameters['idd'];\n    }\n    // -------------------------\n    \n    patchedNode.notes = `🛠 AI AUTO-FIX: Changed ${paramToFix} to ${newValue} and removed 'idd'`;\n    newNodes.push(patchedNode);\n    fixedParameter = paramToFix;\n    \n  } else {\n    newNodes.push(originalNode);\n  }\n}\n\n// 5. Rakit kembali struktur workflow utama\nconst updatedWorkflow = {\n  ...workflowData,     // Pertahankan data 'connections', 'settings', dll\n  nodes: newNodes      // Ganti array nodes dengan yang sudah diperbarui\n};\n\n// 6. Kembalikan data sesuai standar n8n\nreturn [{\n  json: {\n    workflowJSON: updatedWorkflow, \n    diagnosis: aiResponse?.diagnosis || \"Tidak ada diagnosis valid\",\n    fixedParam: fixedParameter,\n    success: true\n  }\n}];"
+      },
+      "id": "2fb0f27a-90fb-4a48-b955-bcc566219875",
+      "name": "Generate Fixed Patch (Ingestion & Deletion)",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        1408,
+        176
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "amount": 15,
+        "unit": "=seconds"
+      },
+      "id": "5dc897e1-512c-4d45-ba72-159b8ef3cfe6",
+      "name": "Cool Down Retry (Ingestion & Deletion)",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        1408,
+        448
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1968,
+        176
+      ],
+      "id": "dfaadb5c-7748-4eba-ac92-f6b3f1a9d610",
+      "name": "Error Message (Fix Ingestion & Deletion) Done"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1792,
+        448
+      ],
+      "id": "86ad42aa-e918-4ea7-8b05-8606f9a80505",
+      "name": "Error Message (Retry Ingestion & Deletion) Done"
+    },
+    {
+      "parameters": {
+        "sendTo": "{{$env.ADMIN_EMAIL}}",
+        "subject": "=[Alert] Error in {{ $('Error Trigger').item.json.workflow.name }} - Action: {{ $('Insert Error Status Table (Ingestion & Deletion)').item.json.Status }}",
+        "message": "=<p>Halo Admin,</p>\n\n<p>Terdeteksi error pada sistem. Berikut adalah detail insiden untuk ditinjau:</p>\n\n<table border=\"0\" cellpadding=\"5\">\n    <tr>\n        <td><strong>Nama Workflow:</strong></td>\n        <td><strong>{{ $('Error Trigger').item.json.workflow.name }}</strong></td>\n    </tr>\n    <tr>\n        <td><strong>Status Action:</strong></td>\n        <td><strong>{{ $('Insert Error Status Table (Ingestion & Deletion)').item.json.Status }}</strong></td>\n    </tr>\n    <tr>\n        <td><strong>Diagnosis AI:</strong></td>\n        <td>{{ $('AI Agent (Ingestion & Deletion)').item.json.output.diagnosis }}</td>\n    </tr>\n    <tr>\n        <td><strong>Link Eksekusi:</strong></td>\n        <td><strong><a href=\"{{ $('Error Trigger').item.json.execution.url }}\">Klik di sini untuk melihat detail</a></strong></td>\n    </tr>\n</table>\n\n<p>Sistem sedang mencoba melakukan retry otomatis. Harap pantau hasilnya.</p>\n\n<p>Salam,<br>\n<strong>AI Self-Healing Engine</strong></p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1024,
+        448
+      ],
+      "id": "81330bc7-4000-484e-b7d8-0254053bd594",
+      "name": "Send Email Retry Status (Ingestion & Deletion)"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "=default",
+        "chatId": "={{$env.WHATSAPP_NOTIFICATION_CHAT_ID}}",
+        "reply_to": "=",
+        "text": "=*🚨 ALERT: Workflow Error*  \n\nHalo Admin,  \nTerdeteksi error pada sistem. Berikut adalah detail insiden untuk ditinjau:  \n\n- *Nama Workflow:* {{ $('Error Trigger').item.json.workflow.name }} \n- *Status Action:* {{ $('Insert Error Status Table (Ingestion & Deletion)').item.json.Status }} \n- *Diagnosis AI:* {{ $('AI Agent (Ingestion & Deletion)').item.json.output.diagnosis }}  \n- *Link Eksekusi:* {{ $('Error Trigger').item.json.execution.url }}  \n\nSistem sedang mencoba melakukan retry otomatis. Harap pantau hasilnya.  \n\nSalam, \n*AI Self-Healing Engine*",
+        "linkPreview": false,
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-waha.WAHA",
+      "typeVersion": 202411,
+      "position": [
+        1216,
+        448
+      ],
+      "id": "1092b948-3b20-4c2e-9922-de36f7c5312a",
+      "name": "Send Whatsapp Message Error Retry Status (Ingestion & Deletion)"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an n8n Senior Engineer.\n\nCONTEXT:\nFailed Node: {{ $('Extract Raw Error').item.json.Failed_Node }}\nError: {{ $('Filter: Ignore Self').item.json.execution.error.stack }}\nWorkflow JSON: {{ JSON.stringify($node[\"Get Workflow (Ingestion & Deletion)\"].json) }}\n\nTASK: Analyze the workflow and error.\n\nANALYSIS RULES:\n1. Carefully inspect the workflow definition.\n2. Identify the node most likely responsible for the error.\n3. Determine whether the failure is:\n  - RETRY = temporary issue such as timeout, rate limit, network error, unavailable service, DNS issue, connection reset, or external API outage.\n  - FIX = workflow configuration issue such as invalid parameter, missing credential, incorrect expression, invalid field mapping, malformed payload, wrong node configuration, unsupported operation, or logic error, AND you can determine the exact fix.\n  - SKIP = workflow needs fixing, but the exact fix is too complex, requires human intervention, missing critical context, or cannot be safely patched directly by you (the AI).\n4. If the issue is FIX:\n  - Identify the failing node and the exact parameter that is likely incorrect.\n5. If the issue is RETRY:\n  - Determine an appropriate retry strategy.\n6. If the issue is SKIP:\n  - Explain why it requires human intervention or cannot be safely auto-patched.\n\nOUTPUT FORMAT INSTRUCTIONS (STRICTLY ENFORCED):\nYou MUST output your final answer ONLY as a valid, raw JSON object. \nDO NOT include any conversational text, greetings, or markdown code blocks (like ```json).\nYour response must start exactly with '{' and end exactly with '}'.\n\nMap your analysis to the JSON schema exactly as follows:\n- \"state\": Strictly either \"RETRY\", \"FIX\", or \"SKIP\".\n- \"diagnosis\": Put all your explanations here. Explain why it failed, why it's a FIX/RETRY/SKIP, and what the suggested correction is. Be concise.\n- \"patch\": \n    - If state is \"FIX\", provide the \"nodeName\" (the exact name of the node that needs fixing, even if it's an upstream node), \"parameterName\", and \"newValue\".\n    - If state is \"RETRY\" or \"SKIP\", set \"nodeName\", \"parameterName\", and \"newValue\" to \"N/A\".\n\nEXAMPLE OUTPUT (FIX):\n{\n  \"state\": \"FIX\",\n  \"diagnosis\": \"The 'limit' parameter in the HTTP Request node is expecting a number, but received a string. This causes a malformed payload error.\",\n  \"patch\": {\n    \"parameterName\": \"limit\",\n    \"newValue\": \"50\"\n  }\n}\n\nEXAMPLE OUTPUT (SKIP):\n{\n  \"state\": \"SKIP\",\n  \"diagnosis\": \"The database query failed due to an unknown schema. This requires manual inspection of the database structure and cannot be auto-patched.\",\n  \"patch\": {\n    \"parameterName\": \"N/A\",\n    \"newValue\": \"N/A\"\n  }\n}",
+        "hasOutputParser": true,
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        352,
+        160
+      ],
+      "id": "2e95c9d9-1120-43b8-8760-24f219e64d98",
+      "name": "AI Agent (Ingestion & Deletion)",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.N8N_BASE_URL}}/api/v1/workflows/{{ $node[\"Error Trigger\"].json.workflow.id}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-N8N-API-KEY",
+              "value": "{{$env.N8N_API_KEY}}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "540cecee-1732-46a3-83e7-1d0af3526c8f",
+      "name": "Retry Execution (Ingestion & Deletion)",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1600,
+        448
+      ],
+      "typeVersion": 4.1
+    },
+    {
+      "parameters": {
+        "sendTo": "{{$env.ADMIN_EMAIL}}",
+        "subject": "=[Alert] Error in {{ $('Error Trigger').item.json.workflow.name }} - Action: {{ $('Insert Error Status Table (Ingestion & Deletion)').item.json.Status }}",
+        "message": "<p>Halo Admin,</p>\n\n<p>Terdeteksi error pada sistem. Berikut adalah detail insiden untuk ditinjau:</p>\n\n<table border=\"0\" cellpadding=\"5\">\n    <tr>\n        <td><strong>Nama Workflow:</strong></td>\n        <td><strong>{{ $('Error Trigger').item.json.workflow.name }}</strong></td>\n    </tr>\n    <tr>\n        <td><strong>Status Action:</strong></td>\n        <td><strong>{{ $('Insert Error Status Table (Ingestion & Deletion)').item.json.Status }}</strong></td>\n    </tr>\n    <tr>\n        <td><strong>Diagnosis AI:</strong></td>\n        <td>{{ $('AI Agent (Ingestion & Deletion)').item.json.output.diagnosis }}</td>\n    </tr>\n    <tr>\n        <td><strong>Link Eksekusi:</strong></td>\n        <td><strong><a href=\"{{ $('Error Trigger').item.json.execution.url }}\">Klik di sini untuk melihat detail</a></strong></td>\n    </tr>\n</table>\n\n<p>Proses auto-correction dilewati. Mohon verifikasi manual segera.</p>\n\n\n<p>Salam,<br>\n<strong>AI Self-Healing Engine</strong></p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1024,
+        752
+      ],
+      "id": "42a274dd-e207-4d3d-8970-e542f44b8091",
+      "name": "Send Email Skipped Status (Ingestion & Deletion)"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "=default",
+        "chatId": "={{$env.WHATSAPP_NOTIFICATION_CHAT_ID}}",
+        "reply_to": "=",
+        "text": "=*🚨 ALERT: Workflow Error*  \n\nHalo Admin,  \nTerdeteksi error pada sistem. Berikut adalah detail insiden untuk ditinjau:  \n\n- *Nama Workflow:* {{ $('Error Trigger').item.json.workflow.name }} \n- *Status Action:* {{ $('Insert Error Status Table (Ingestion & Deletion)').item.json.Status }} \n- *Diagnosis AI:* {{ $('AI Agent (Ingestion & Deletion)').item.json.output.diagnosis }}  \n- *Link Eksekusi:* {{ $('Error Trigger').item.json.execution.url }}  \n\nProses auto-correction dilewati. Mohon verifikasi manual segera. \n\nSalam, \n*AI Self-Healing Engine*",
+        "linkPreview": false,
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-waha.WAHA",
+      "typeVersion": 202411,
+      "position": [
+        1216,
+        752
+      ],
+      "id": "35dd40dc-aae4-4c95-9803-cc423c1699d4",
+      "name": "Send Whatsapp Message Error Skipped Status (Ingestion & Deletion)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        -112
+      ],
+      "id": "6085a583-94cd-48b6-ae05-f9baf93856cf",
+      "name": "Error Message (Skip Auto-Correction) Done1"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "=default",
+        "chatId": "={{$env.WHATSAPP_NOTIFICATION_CHAT_ID}}",
+        "reply_to": "=",
+        "text": "=*🚨 ALERT: Workflow Error*  \n\nHalo Admin,  \nTerdeteksi error pada sistem. Berikut adalah detail insiden untuk ditinjau:  \n\n- *Nama Workflow:* {{ $('Error Trigger').item.json.workflow.name }} \n- *Status Action:* {{ $('Insert Error Status Table (Ingestion & Deletion)').item.json.Status }} \n- *Diagnosis AI:* {{ $('AI Agent (Ingestion & Deletion)').item.json.output.diagnosis }}  \n- *Link Eksekusi:* {{ $('Error Trigger').item.json.execution.url }}  \n\nProses auto-correction dilewati. Mohon verifikasi manual segera. \n\nSalam, \n*AI Self-Healing Engine*",
+        "linkPreview": false,
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-waha.WAHA",
+      "typeVersion": 202411,
+      "position": [
+        1216,
+        -112
+      ],
+      "id": "96108b1c-a338-4d8c-b2b1-d7da14ad96d7",
+      "name": "Send Whatsapp Message Error Skipped Status (Ingestion & Deletion)1"
+    },
+    {
+      "parameters": {
+        "sendTo": "{{$env.ADMIN_EMAIL}}",
+        "subject": "=[Alert] Error in {{ $('Error Trigger').item.json.workflow.name }} - Action: {{ $('Insert Error Status Table (Ingestion & Deletion)').item.json.Status }}",
+        "message": "=<p>Halo Admin,</p>\n\n<p>Terdeteksi error pada sistem. Berikut adalah detail insiden untuk ditinjau:</p>\n\n<table border=\"0\" cellpadding=\"5\">\n    <tr>\n        <td><strong>Nama Workflow:</strong></td>\n        <td><strong>{{ $('Error Trigger').item.json.workflow.name }}</strong></td>\n    </tr>\n    <tr>\n        <td><strong>Status Action:</strong></td>\n        <td><strong>{{ $('Insert Error Status Table (Ingestion & Deletion)').item.json.Status }}</strong></td>\n    </tr>\n    <tr>\n        <td><strong>Diagnosis AI:</strong></td>\n        <td>{{ $('AI Agent (Ingestion & Deletion)').item.json.output.diagnosis }}</td>\n    </tr>\n    <tr>\n        <td><strong>Link Eksekusi:</strong></td>\n        <td><strong><a href=\"{{ $('Error Trigger').item.json.execution.url }}\">Klik di sini untuk melihat detail</a></strong></td>\n    </tr>\n</table>\n\n<p>Sistem telah melakukan patching otomatis. Mohon validasi apakah error sudah teratasi.</p>\n\n<p>Salam,<br>\n<strong>AI Self-Healing Engine</strong></p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1024,
+        176
+      ],
+      "id": "10d087e7-b571-4b9d-b665-18570c84cdfe",
+      "name": "Send Email Fix Status (Ingestion & Deletion)"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "=default",
+        "chatId": "={{$env.WHATSAPP_NOTIFICATION_CHAT_ID}}",
+        "reply_to": "=",
+        "text": "=*🚨 ALERT: Workflow Error*  \n\nHalo Admin,  \nTerdeteksi error pada sistem. Berikut adalah detail insiden untuk ditinjau:  \n\n- *Nama Workflow:* {{ $('Error Trigger').item.json.workflow.name }} \n- *Status Action:* {{ $('Insert Error Status Table (Ingestion & Deletion)').item.json.Status }} \n- *Diagnosis AI:* {{ $('AI Agent (Ingestion & Deletion)').item.json.output.diagnosis }}  \n- *Link Eksekusi:* {{ $('Error Trigger').item.json.execution.url }}  \n\nSistem telah melakukan patching otomatis. Mohon validasi apakah error sudah teratasi. \n\nSalam, \n*AI Self-Healing Engine*",
+        "linkPreview": false,
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-waha.WAHA",
+      "typeVersion": 202411,
+      "position": [
+        1216,
+        176
+      ],
+      "id": "3bd6715a-5184-4c40-9e3e-6d1f4e6023e9",
+      "name": "Send Whatsapp Message Error Fix Status (Ingestion & Deletion)"
+    },
+    {
+      "parameters": {
+        "sendTo": "{{$env.ADMIN_EMAIL}}",
+        "subject": "=[Alert] Error in {{ $('Error Trigger').item.json.workflow.name }} - Action: {{ $('Insert Error Status Table (Ingestion & Deletion)').item.json.Status }}",
+        "message": "=<p>Halo Admin,</p>\n\n<p>Terdeteksi error pada sistem. Berikut adalah detail insiden untuk ditinjau:</p>\n\n<table border=\"0\" cellpadding=\"5\">\n    <tr>\n        <td><strong>Nama Workflow:</strong></td>\n        <td><strong>{{ $('Error Trigger').item.json.workflow.name }}</strong></td>\n    </tr>\n    <tr>\n        <td><strong>Status Action:</strong></td>\n        <td><strong>{{ $('Insert Error Status Table (Ingestion & Deletion)').item.json.Status }}</strong></td>\n    </tr>\n    <tr>\n        <td><strong>Diagnosis AI:</strong></td>\n        <td>{{ $('AI Agent (Ingestion & Deletion)').item.json.output.diagnosis }}</td>\n    </tr>\n    <tr>\n        <td><strong>Link Eksekusi:</strong></td>\n        <td><strong><a href=\"{{ $('Error Trigger').item.json.execution.url }}\">Klik di sini untuk melihat detail</a></strong></td>\n    </tr>\n</table>\n\n<p>Agent AI tidak dapat mengambil keputusan (skip). Diperlukan intervensi manual.</p>\n\n\n<p>Salam,<br>\n<strong>AI Self-Healing Engine</strong></p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1024,
+        -112
+      ],
+      "id": "21d87fee-d9b9-47ef-8a05-2adb6fa220ee",
+      "name": "Send Email Skipped Status (AI Agent)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        752
+      ],
+      "id": "abb07568-b347-43d7-a2a2-0482a85a9491",
+      "name": "Error Message (Skip Ingestion & Deletion) Done"
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Filter: Ignore Self",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Raw Error": {
+      "main": [
+        [
+          {
+            "node": "Workflow Filtering",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter: Ignore Self": {
+      "main": [
+        [
+          {
+            "node": "Error Status Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Diagnose Error1": {
+      "main": [
+        [
+          {
+            "node": "Determine Action3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decision Schema1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Diagnose Error1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Workflow": {
+      "main": [
+        [
+          {
+            "node": "Diagnose Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cool Down2": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Determine Action3": {
+      "main": [
+        [
+          {
+            "node": "Cool Down2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Email Skipped Status (AI Agent)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "Question Categorizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Output Parser (Question Category)": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Question Categorizer",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Main AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Format Whatsapp Output2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Question Categorizer": {
+      "main": [
+        [
+          {
+            "node": "Main AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Chat Memory (n8n Chat)": {
+      "ai_memory": [
+        [
+          {
+            "node": "Main AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Dataset": {
+      "ai_tool": [
+        [
+          {
+            "node": "Main AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run SQL Query": {
+      "ai_tool": [
+        [
+          {
+            "node": "Main AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search SISIP Knowledge": {
+      "ai_tool": [
+        [
+          {
+            "node": "Main AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Categorizer": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Question Categorizer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Search SISIP Knowledge",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Main AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Whatsapp Output2": {
+      "main": [
+        [
+          {
+            "node": "Send Whatsapp Message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Whatsapp Message5": {
+      "main": [
+        [
+          {
+            "node": "Error Message (Skip Auto-Correction) Done2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Whatsapp Output5": {
+      "main": [
+        [
+          {
+            "node": "Send Whatsapp Message5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many threads2": {
+      "main": [
+        [
+          {
+            "node": "Format Whatsapp Output5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Whatsapp Message2": {
+      "main": [
+        [
+          {
+            "node": "Get many threads2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Filtering": {
+      "main": [
+        [
+          {
+            "node": "Get Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Workflow (Ingestion & Deletion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Different Item Filtering": {
+      "main": [
+        [
+          {
+            "node": "Extract Raw Error",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Email Skipped Status (Ingestion & Deletion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Reasoner": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Diagnose Error1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Status Check": {
+      "main": [
+        [
+          {
+            "node": "Different Item Filtering",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deepseek LLM (Ingestion & Deletion)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent (Ingestion & Deletion)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decision Schema (Ingestion & Deletion)": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent (Ingestion & Deletion)",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Workflow (Ingestion & Deletion)": {
+      "main": [
+        [
+          {
+            "node": "AI Agent (Ingestion & Deletion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Error Status Table (Ingestion & Deletion)": {
+      "main": [
+        [
+          {
+            "node": "Determine Action (Ingestion & Deletion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Determine Action (Ingestion & Deletion)": {
+      "main": [
+        [
+          {
+            "node": "Send Email Fix Status (Ingestion & Deletion)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Email Retry Status (Ingestion & Deletion)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Email Skipped Status (Ingestion & Deletion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retry Fixed Execution (Ingestion & Deletion)": {
+      "main": [
+        [
+          {
+            "node": "Error Message (Fix Ingestion & Deletion) Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Fixed Workflow (Ingestion & Deletion)": {
+      "main": [
+        [
+          {
+            "node": "Retry Fixed Execution (Ingestion & Deletion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Fixed Patch (Ingestion & Deletion)": {
+      "main": [
+        [
+          {
+            "node": "Update Fixed Workflow (Ingestion & Deletion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cool Down Retry (Ingestion & Deletion)": {
+      "main": [
+        [
+          {
+            "node": "Retry Execution (Ingestion & Deletion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email Retry Status (Ingestion & Deletion)": {
+      "main": [
+        [
+          {
+            "node": "Send Whatsapp Message Error Retry Status (Ingestion & Deletion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Whatsapp Message Error Retry Status (Ingestion & Deletion)": {
+      "main": [
+        [
+          {
+            "node": "Cool Down Retry (Ingestion & Deletion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Message (Fix Ingestion & Deletion) Done": {
+      "main": [
+        []
+      ]
+    },
+    "AI Agent (Ingestion & Deletion)": {
+      "main": [
+        [
+          {
+            "node": "Insert Error Status Table (Ingestion & Deletion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retry Execution (Ingestion & Deletion)": {
+      "main": [
+        [
+          {
+            "node": "Error Message (Retry Ingestion & Deletion) Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email Skipped Status (Ingestion & Deletion)": {
+      "main": [
+        [
+          {
+            "node": "Send Whatsapp Message Error Skipped Status (Ingestion & Deletion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Whatsapp Message Error Skipped Status (Ingestion & Deletion)": {
+      "main": [
+        [
+          {
+            "node": "Error Message (Skip Ingestion & Deletion) Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Whatsapp Message Error Skipped Status (Ingestion & Deletion)1": {
+      "main": [
+        [
+          {
+            "node": "Error Message (Skip Auto-Correction) Done1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email Fix Status (Ingestion & Deletion)": {
+      "main": [
+        [
+          {
+            "node": "Send Whatsapp Message Error Fix Status (Ingestion & Deletion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Whatsapp Message Error Fix Status (Ingestion & Deletion)": {
+      "main": [
+        [
+          {
+            "node": "Generate Fixed Patch (Ingestion & Deletion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email Skipped Status (AI Agent)": {
+      "main": [
+        [
+          {
+            "node": "Send Whatsapp Message Error Skipped Status (Ingestion & Deletion)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "tags": []
+}

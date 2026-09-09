@@ -1,0 +1,17 @@
+name: Validate repository
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate sanitized workflow JSON
+        run: python3 scripts/validate_repo.py
+      - name: Validate root Compose syntax
+        run: cp .env.example .env && docker compose --env-file .env config >/dev/null
+      - name: Validate Supabase Compose syntax
+        run: cp infrastructure/supabase/.env.example infrastructure/supabase/.env && cd infrastructure/supabase && docker compose --env-file .env config >/dev/null

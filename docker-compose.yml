@@ -1,0 +1,48 @@
+name: ai-sisip
+
+services:
+  n8n:
+    build:
+      context: .
+      dockerfile: docker/n8n/Dockerfile
+    container_name: n8n-server
+    restart: unless-stopped
+    ports:
+      - "${N8N_PORT:-5678}:5678"
+    env_file:
+      - .env
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - shared-net
+
+  waha:
+    image: devlikeapro/waha@sha256:527ff3d634925adb26d596883d7b3ca502c080f737af3c2af2be0c973c511533
+    container_name: waha-ai-sisip
+    restart: always
+    ports:
+      - "${WAHA_PORT:-3000}:3000/tcp"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "10"
+    env_file:
+      - .env
+    volumes:
+      - waha_sessions:/app/.sessions
+      - waha_media:/app/.media
+    networks:
+      - shared-net
+
+volumes:
+  n8n_data:
+  waha_sessions:
+  waha_media:
+
+networks:
+  shared-net:
+    external: true
