@@ -6,7 +6,7 @@ The workflow templates are sanitized and inactive by default. Credential objects
 
 ## Rotate previously exposed credentials
 
-Before publishing or deploying, rotate every real credential that has ever appeared in exported workflow JSON or `.env` files, including n8n API keys/passwords, WAHA keys/passwords, Supabase/Postgres/JWT/service-role values, Google OAuth secrets, DeepSeek/HuggingFace API keys, and any other secret copied through development artifacts.
+Before publishing or deploying, rotate all credentials previously used during development, including credentials for n8n, WAHA, Supabase, PostgreSQL, Google OAuth, DeepSeek, HuggingFace, and other integrated services.
 
 ## Never commit
 
