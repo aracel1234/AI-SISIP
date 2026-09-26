@@ -1,3 +1,0 @@
-Validation OK: workflow JSON/sanitization checks passed.
-
-Validation covers JSON structure, inactive workflows, removed credential/webhook metadata, no packaged .env, and basic JWT/private-IP URL scanning. Docker images were not built in this artifact-generation environment.
